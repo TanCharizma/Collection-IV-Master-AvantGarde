@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- =================================================================== -->
+    <!-- SEO & METADATA (Update these values for each new client) -->
+    <!-- =================================================================== -->
+    <meta name="description" content="Editorial model and creative director portfolio.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://your-client-domain.com/">
+    
+    <!-- Open Graph (Facebook, LinkedIn, iMessage) -->
+    <meta property="og:title" content="Portfolio | Client Name">
+    <meta property="og:description" content="Editorial model and creative director portfolio.">
+    <meta property="og:image" content="https://your-client-domain.com/image/hero/hero.webp">
+    <meta property="og:url" content="https://your-client-domain.com/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Portfolio | Client Name">
+    <meta name="twitter:description" content="Editorial model and creative director portfolio.">
+    <meta name="twitter:image" content="https://your-client-domain.com/image/hero/hero.webp">
+    
+    <!-- Apple Web App Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <meta name="theme-color" content="#EAEAEA" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
+    <title>Portfolio | Client Name</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=block" rel="stylesheet">
+    <link rel="preconnect" href="https://player.vimeo.com">
+    <link rel="preconnect" href="https://i.vimeocdn.com">
+    <link rel="preload" as="image" href="image/hero/hero.webp" fetchpriority="high">
+    <script src="config.js"></script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Client Name",
+      "url": "https://your-client-domain.com/",
+      "image": "https://your-client-domain.com/image/hero/hero.webp",
+      "jobTitle": "Model and Creative Director"
+    }
+    </script>
+</head>
+<body>
+
+    <!-- BRUTALIST SPLASH SCREEN -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-logo client-name-marquee"></div>
+    </div>
+    <script>
+        (function() {
+            const navEntries = performance.getEntriesByType("navigation");
+            const isReload = navEntries.length > 0 ? navEntries[0].type === 'reload' : (window.performance && performance.navigation && performance.navigation.type === 1);
+            if (sessionStorage.getItem('hasSeenSplash') && !isReload) {
+                document.getElementById('splash-screen').style.display = 'none';
+            }
+        })();
+    </script>
+
+    <script src="nav.js"></script>
+    <header class="hero" id="hero">
+        <!-- Change the background image URL right here for new clients -->
+        <div class="hero-bg" style="background-image: url('image/hero/hero.webp');"></div>
+        <div class="hero-content">
+            <div class="marquee-container reveal">
+                <div class="marquee-track">
+                    <!-- Half 1 -->
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                    <!-- Half 2 -->
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                    <h1 class="client-name-marquee"></h1>
+                </div>
+            </div>
+            <div class="hero-text-block">
+                <p class="hero-tagline reveal delay-1">
+                    <span lang="en" id="taglineEn"></span>
+                    <span lang="th" id="taglineTh"></span>
+                </p>
+                <div class="hero-btns reveal delay-2">
+                    <a href="booking.html" class="btn-primary" lang="en">Book Me</a>
+                    <a href="booking.html" class="btn-primary" lang="th">จองคิว</a>
+                    <a href="#highlights" class="btn-secondary" lang="en">View Portfolio</a>
+                    <a href="#highlights" class="btn-secondary" lang="th">ดูผลงาน</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 2: Highlights (4 Images) -->
+    <section id="highlights">
+        <div class="container">
+            <p class="section-label reveal">
+                <span lang="en">Highlights</span>
+                <span lang="th">ไฮไลต์</span>
+            </p>
+            <div style="grid-column: span 12;">
+                <div class="featured-grid">
+                    <div class="featured-item reveal"><img src="image/highlights/01.webp" alt="Editorial" loading="lazy" decoding="async"></div>
+                    <div class="featured-item reveal"><img src="image/highlights/02.webp" alt="Editorial" loading="lazy" decoding="async"></div>
+                    <div class="featured-item reveal"><img src="image/highlights/03.webp" alt="Editorial" loading="lazy" decoding="async"></div>
+                    <div class="featured-item reveal"><img src="image/highlights/04.webp" alt="Editorial" loading="lazy" decoding="async"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2.5: Selected Clients -->
+    <section id="selected-clients" style="padding: 0 0 96px 0;">
+        <div class="container">
+            <div style="grid-column: span 12; text-align: center;">
+                <h3 class="reveal" style="font-size: 12px; letter-spacing: 0.3em; margin-bottom: 48px; font-weight: 400; color: var(--gold);">
+                    <span lang="en">Selected Clients</span>
+                    <span lang="th">ลูกค้าที่ร่วมงาน</span>
+                </h3>
+                <div class="reveal delay-1" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: clamp(32px, 6vw, 64px);">
+                    <img src="image/brand_icons/vogue.webp" alt="VOGUE" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/elle.webp" alt="ELLE" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/cartier.webp" alt="CARTIER" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/armani.webp" alt="ARMANI" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/levi.webp" alt="LEVI'S" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Full Portfolio (20 Images) -->
+    <section id="portfolio" class="bg-alt">
+        <div class="container">
+            <p class="section-label reveal">
+                <span lang="en">Portfolio</span>
+                <span lang="th">ผลงาน</span>
+            </p>
+            <div style="grid-column: span 12;">
+                <div class="full-grid">
+                    <div class="portfolio-column">
+                        <div class="masonry-col">
+                            <img src="image/portfolio/01.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/02.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/03.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/04.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/05.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/06.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                        </div>
+                        <div class="masonry-col">
+                            <img src="image/portfolio/07.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/08.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/09.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/10.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                        </div>
+                    </div>
+                    <div class="portfolio-column">
+                        <div class="masonry-col">
+                            <img src="image/portfolio/11.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/12.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/13.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/14.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/15.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                        </div>
+                        <div class="masonry-col">
+                            <img src="image/portfolio/16.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/17.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/18.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/19.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                            <img src="image/portfolio/20.webp" alt="Work" class="reveal" loading="lazy" decoding="async">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Video Portfolio (2 Videos) -->
+    <section id="motion">
+        <div class="container">
+            <p class="section-label reveal">
+                <span lang="en">Videos</span>
+                <span lang="th">วิดีโอ</span>
+            </p>
+            <div style="grid-column: span 12;">
+                <div class="video-grid">
+                    <div class="video-item reveal">
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--surface); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--text);">
+                                <span style="font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;">[ Video Embed Placeholder 1 ]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-item reveal">
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--surface); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--text);">
+                                <span style="font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;">[ Video Embed Placeholder 2 ]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: Measurements -->
+    <section id="measurements" class="bg-alt">
+        <div class="container">
+            <p class="section-label reveal">
+                <span lang="en">Measurements</span>
+                <span lang="th">สัดส่วน</span>
+            </p>
+            <div style="grid-column: span 12;">
+                <div class="info-strip">
+                    <div><span lang="en">Height</span><span lang="th">ส่วนสูง</span> / <span id="val-height"></span></div>
+                    <div><span lang="en">Bust</span><span lang="th">อก</span> / <span id="val-bust"></span></div>
+                    <div><span lang="en">Waist</span><span lang="th">เอว</span> / <span id="val-waist"></span></div>
+                    <div><span lang="en">Hips</span><span lang="th">สะโพก</span> / <span id="val-hips"></span></div>
+                    <div><span lang="en">Shoes</span><span lang="th">รองเท้า</span> / <span id="val-shoes"></span></div>
+                    <div><span lang="en">Hair</span><span lang="th">สีผม</span> / <span lang="en" id="val-hairEn"></span><span lang="th" id="val-hairTh"></span></div>
+                    <div><span lang="en">Eyes</span><span lang="th">นัยน์ตา</span> / <span lang="en" id="val-eyesEn"></span><span lang="th" id="val-eyesTh"></span></div>   
+                </div>
+                <!-- Brutalist Comp Card Button -->
+                <div class="reveal delay-1" id="compCardContainer" style="text-align: center; margin-top: 48px;">
+                    <a href="#" id="compCardBtn" class="btn-primary">
+                        <span lang="en">View Comp Card</span>
+                        <span lang="th">ดูคอมพ์การ์ด</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: Digitals (4 Images) -->
+    <section id="digitals">
+        <div class="container">
+            <p class="section-label reveal">
+                <span lang="en">Digitals</span>
+                <span lang="th">สแนปช็อต</span>
+            </p>
+            <div style="grid-column: span 12;">
+                <div class="digitals-grid">
+                    <img src="image/digitals/01.webp" alt="Digital 1" class="reveal" loading="lazy" decoding="async">
+                    <img src="image/digitals/02.webp" alt="Digital 2" class="reveal" loading="lazy" decoding="async">
+                    <img src="image/digitals/03.webp" alt="Digital 3" class="reveal" loading="lazy" decoding="async">
+                    <img src="image/digitals/04.webp" alt="Digital 4" class="reveal" loading="lazy" decoding="async">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2 class="reveal">
+            <span lang="en">Available for bookings</span>
+            <span lang="th">ติดต่องานและจองคิว</span>
+        </h2>
+        <a href="booking.html" class="btn-bold reveal delay-1">
+            <span lang="en">Booking Page</span>
+            <span lang="th">ไปที่หน้าการจอง</span>
+        </a>
+    </section>
+
+    <a href="#hero" class="back-to-top">
+        <span lang="en">Top</span>
+        <span lang="th">กลับขึ้นบน</span>
+    </a>
+
+    <div id="imageModal" class="modal">
+        <span class="modal-nav modal-prev">&#10094;</span>
+        <img class="modal-content" id="img01">
+        <span class="modal-nav modal-next">&#10095;</span>
+    </div>
+
+    <!-- Dedicated Comp Card Modal -->
+    <div id="compCardModal" class="modal" role="dialog" aria-modal="true" aria-label="Comp Card">
+        <img class="modal-content" id="compCardImg" alt="Client Comp Card" style="max-height: 80vh; border: 1px solid var(--text); box-shadow: 8px 8px 0px var(--gold);">
+        <div style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2001; text-align: center; width: 100%;">
+            <a href="#" id="compCardDownload" download="Comp_Card" class="btn-primary">
+                <span lang="en">Download PDF</span>
+                <span lang="th">ดาวน์โหลด PDF</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="footer.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

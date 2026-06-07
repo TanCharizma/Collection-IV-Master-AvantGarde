@@ -1,0 +1,21 @@
+{
+  "name": "Portfolio",
+  "short_name": "Portfolio",
+  "description": "Professional Model and Creative Director Portfolio.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#EAEAEA",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "image/hero/hero.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "image/hero/hero.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}

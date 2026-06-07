@@ -1,0 +1,1530 @@
+/* ==========================================================================
+   CLIENT CONFIGURATION (THEME SETTINGS)
+   Update these variables to re-skin the entire website in seconds.
+   ========================================================================== */
+:root {
+    /* 1. BRAND COLORS */
+    --black: #000000;
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --gold: #CC2900; /* Dimmed Safety Red - Elevated Utility */
+    --gold-footer: #FF5733; /* Brighter red for footer readability on black */
+
+    /* 2. BRAND FONTS */
+    --serif: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: 'Courier New', Courier, monospace; /* Brutalist Typewriter Font */
+
+    /* 3. SPACING */
+    --margin: 80px;
+    --gutter: 24px;
+
+    /* Theme-aware variables */
+    --bg: #EAEAEA; /* Stark concrete light */
+    --text: #000000; /* Pure brutal black */
+    --surface: #D4D4D4; /* Darker concrete */
+    --nav-bg: rgba(234, 234, 234, 0.95);
+    --dropdown-bg: #EAEAEA;
+    --alt-bg: #DFDFDF;
+    --border-subtle: #000000; /* HARSH 1px solid black wireframes */
+}
+
+[data-theme="dark"] {
+    --bg: #050505; /* Pitch black */
+    --text: #FFFFFF; /* Pure white */
+    --surface: #151515; 
+    --nav-bg: rgba(5, 5, 5, 0.95);
+    --dropdown-bg: #050505;
+    --alt-bg: #0A0A0A; 
+    --border-subtle: #FFFFFF; /* HARSH 1px solid white wireframes */
+    --gold: #A3CC00; /* Dimmed Acid Green - Softer for Dark Mode */
+    --gold-footer: #C8FF33; /* Brighter green for footer readability on black */
+}
+
+html {
+    width: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text) var(--bg);
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Removes the default mobile browser gray tap blink universally */
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--mono); /* Terminal / Typewriter effect */
+    font-size: 16px; /* Smaller default for monospace readability */
+    line-height: 1.6;
+    letter-spacing: 0; /* Monospace characters shouldn't be tightened */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- CUSTOM SCROLLBAR --- */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg);
+    border-left: 1px solid var(--text);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--text);
+    border: 2px solid var(--bg); /* Adds breathing room / inset effect */
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
+
+/* Language Toggle Logic */
+/* Hide Thai elements by default */
+[lang="th"] { 
+    display: none !important; 
+}
+
+/* Toggle logic: target only elements with the explicit lang attribute */
+body.lang-th [lang="en"] { display: none !important; }
+body.lang-th [lang="th"] { display: block !important; }
+body.lang-th a[lang="th"], body.lang-th span[lang="th"] { display: inline-block !important; }
+
+h1, h2, .logo {
+    font-family: var(--sans);
+    font-weight: 900; /* MAXIMUM WEIGHT */
+    text-transform: uppercase;
+    letter-spacing: -0.05em; /* Extremely tight brutalist tracking */
+}
+
+h1 { font-size: clamp(80px, 14vw, 200px); line-height: 0.8; } /* Massive unconstrained scaling */
+h2 { font-size: 64px; margin-bottom: 64px; font-weight: 900; letter-spacing: -0.04em; } /* Larger with more bottom margin */
+
+h3 { 
+    font-family: var(--sans); 
+    font-size: 24px; 
+    font-weight: 900; 
+    text-transform: uppercase; 
+    letter-spacing: -0.02em; 
+    margin-bottom: 32px; 
+    color: var(--text); 
+    opacity: 1; /* Ensures text stays strictly black on white backgrounds */
+}
+
+a { text-decoration: none; color: inherit; transition: opacity 0.1s ease-out, color 0.1s ease-out; }
+a:hover { opacity: 0.7; }
+
+/* Brand Logos Theme Adaptability */
+.brand-logo { 
+    transition: filter 0.5s ease; 
+    pointer-events: none; /* Foolproof kill switch: Blocks all click events and modal triggers */
+    filter: invert(20%) sepia(86%) saturate(4898%) hue-rotate(10deg) brightness(75%) contrast(106%); /* Darker shade of --gold (#CC2900) */
+}
+[data-theme="dark"] .brand-logo { filter: invert(67%) sepia(74%) saturate(3048%) hue-rotate(39deg) brightness(80%) contrast(104%); /* Darker shade of dark mode --gold (#A3CC00) */ }
+
+/* Grid System */
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 var(--margin);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--gutter);
+}
+
+/* --- 2. NAVIGATION BAR --- */
+nav {
+    height: 64px; /* Reduced height for a sleeker look */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px; /* Reduced padding for precision */
+    position: fixed;
+    top: 0; 
+    width: 100%;
+    z-index: 100;
+    background: var(--bg); /* Solid brutalist block */
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--text); /* Clean structural line */
+    transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- NAVIGATION ENTRANCE ANIMATION --- */
+@keyframes navEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo {
+    opacity: 0;
+    animation: navEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.1s;
+}
+
+@media (min-width: 769px) {
+    .nav-links > * {
+        opacity: 0;
+        animation: navEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .nav-links > *:nth-child(1) { animation-delay: 0.2s; }
+    .nav-links > *:nth-child(2) { animation-delay: 0.3s; }
+    .nav-links > *:nth-child(3) { animation-delay: 0.4s; }
+    .nav-links > *:nth-child(4) { animation-delay: 0.5s; }
+    .nav-links > *:nth-child(5) { animation-delay: 0.6s; }
+}
+
+.nav-links {
+    font-family: var(--sans); /* Force nav to stay heavy */
+    display: flex;
+    gap: 32px; /* Slightly tighter to fit theme toggle */
+    font-size: 13px; /* Slightly larger font */
+    text-transform: uppercase;
+    letter-spacing: 0.25em; /* More spread out */
+    margin-left: auto; /* Pushes the nav-links to the right */
+    align-items: center;
+}
+
+.theme-toggle {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.1s ease-out, color 0.1s ease-out, background-color 0.1s ease-out;
+}
+
+.lang-switch {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    transition: color 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+.lang-switch span {
+    opacity: 0.8; /* Improved visibility for non-active language */
+    font-weight: 500;
+    transition: color 0.1s ease-out, opacity 0.1s ease-out, transform 0.1s ease-out;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+}
+
+/* Animated Line Indicator */
+.lang-switch span::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor; /* Matches the text color automatically */
+    transform: translateX(-50%) scaleX(0);
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease-out;
+    opacity: 0;
+}
+
+/* Highlight EN when active */
+body:not(.lang-th) .lang-switch .en {
+    opacity: 1;
+    font-weight: 600;
+    color: var(--gold) !important;
+}
+body:not(.lang-th) .lang-switch .en::after {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+}
+
+/* Highlight TH when active */
+body.lang-th .lang-switch .th {
+    opacity: 1;
+    font-weight: 600;
+    color: var(--gold) !important;
+}
+body.lang-th .lang-switch .th::after {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+}
+
+.logo, .nav-links a, .lang-switch {
+    color: var(--text);
+    transition: none; /* Instant harsh transitions */
+}
+
+/* Prevent native mobile dragging and highlighting of navigation links */
+.logo, .nav-links a, .lang-switch span, .theme-toggle, .mobile-toggle {
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    user-select: none;
+}
+
+.nav-links a.active, .dropdown-trigger.active {
+    color: var(--gold) !important; /* Bold gold for active state */
+}
+
+.back-to-top {
+    font-family: var(--sans);
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    background: var(--nav-bg);
+    padding: 12px 24px;
+    border: 1px solid var(--border-subtle);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+}
+.back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+/* Editorial Dropdown Styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-trigger {
+    position: relative;
+    z-index: 102; /* Elevates above the invisible hover bridge so it remains clickable */
+    display: inline-flex;
+    align-items: center;
+}
+
+.dropdown-trigger::after {
+    content: '▾';
+    margin-left: 8px;
+    font-size: 10px;
+    opacity: 0.5;
+    display: inline-block;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdown:hover .dropdown-trigger::after {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px); /* Tighter emergence */
+    background: var(--bg);
+    backdrop-filter: none;
+    min-width: 140px; /* Reduced width */
+    padding: 8px 0; /* Reduced padding */
+    border: 1px solid var(--text); /* Clean dropdown box */
+    border-top: none;
+    border-radius: 0; /* Removed border radius */
+    box-shadow: none; /* Removed shadow */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s;
+    z-index: 101;
+}
+
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* Invisible bridge to prevent cursor flickering when crossing the 8px gap */
+.dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: -16px;
+    left: 0;
+    width: 100%;
+    height: 16px;
+}
+
+.dropdown-content a {
+    display: block !important; 
+    padding: 12px 16px;
+    font-size: 10px;
+    text-align: center;
+    letter-spacing: 0.3em;
+    color: var(--text) !important; /* Ensure readability on theme background */
+    opacity: 0;
+    transform: translateY(4px);
+    transition: none; /* Brutalist snap */
+}
+
+.dropdown-content a:hover {
+    background-color: var(--text);
+    color: var(--bg) !important;
+}
+
+.dropdown:hover .dropdown-content a {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Subtle staggered entrance for the text */
+.dropdown:hover .dropdown-content a:nth-child(1) { transition-delay: 0.15s; }
+.dropdown:hover .dropdown-content a:nth-child(2) { transition-delay: 0.2s; }
+.dropdown:hover .dropdown-content a:nth-child(3) { transition-delay: 0.25s; }
+.dropdown:hover .dropdown-content a:nth-child(4) { transition-delay: 0.3s; }
+.dropdown:hover .dropdown-content a:nth-child(5) { transition-delay: 0.35s; }
+
+.dropdown-content a.active {
+    color: var(--gold) !important;
+    font-weight: 600;
+}
+
+/* Hamburger Icon */
+.mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 1001;
+    /* Mobile entrance animation */
+    opacity: 0;
+    animation: navEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.2s;
+}
+
+.mobile-toggle span {
+    width: 22px;
+    height: 1px;
+    background-color: currentColor;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-book {
+    border: 0.5px solid var(--black); /* Keep thin border */
+    padding: 12px 24px; /* Slightly more padding */
+    font-size: 13px; /* Slightly smaller font */
+    text-transform: uppercase;
+    letter-spacing: 0.15em; /* Refined letter spacing */
+}
+
+/* --- 3. HOMEPAGE SPECIFIC SECTIONS --- */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--margin);
+    position: relative;
+    color: var(--white);
+    overflow: hidden; /* Necessary for the scale effect */
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bg); /* Seamlessly bridges the gap with the splash screen */
+    background-repeat: no-repeat;
+    background-position: center 10%;
+    background-size: cover;
+    z-index: 0;
+    transform-origin: center 20%;
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale3d(1.1, 1.1, 1); /* Initial state */
+    transition: opacity 1.5s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform, opacity; 
+    pointer-events: none; /* Stops it from catching mouse events during animation */
+}
+
+.hero:not(.loaded) .hero-bg {
+}
+
+.hero.loaded .hero-bg {
+    opacity: 1;
+    animation: heroEntranceZoom 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Faster, smoother pure CSS zoom-in */
+}
+
+@keyframes heroEntranceZoom {
+    0% { transform: translate3d(0, 0, 0) scale3d(1.1, 1.1, 1); }
+    100% { transform: translate3d(0, 0, 0) scale3d(1, 1, 1); }
+}
+
+.hero-content p {
+    text-transform: uppercase; /* Keep uppercase */
+    letter-spacing: 0.4em; /* More spread out */
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.9); /* Replaces opacity to prevent double alpha-compositing lag */
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+    pointer-events: none; /* Allows click-through and prevents hit-test blocks */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-bottom: 4vh; 
+}
+
+.hero-text-block {
+    max-width: 600px;
+    margin-left: 12vw; /* Asymmetrical indent */
+    margin-top: 32px;
+    will-change: opacity; /* Offloads the JS scroll fade strictly for the static text */
+    transform: translateZ(0); /* Locks the block to its own GPU layer to prevent child transition conflicts */
+    -webkit-backface-visibility: hidden; /* Flattens the layer to completely prevent alpha-compositing VRAM lag */
+    backface-visibility: hidden;
+}
+
+.hero-tagline {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em; /* Aggressive tracking */
+    color: var(--gold);
+    opacity: 1;
+    margin-top: 24px; 
+    position: relative;
+}
+
+/* Subtle Line Separator */
+.hero-tagline::before {
+    content: '';
+    position: absolute;
+    top: -12px; /* Positioned exactly in the middle of the gap */
+    left: 0;
+    width: 40px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3); /* Replaces opacity to prevent double alpha-compositing lag */
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; /* Synchronized with delay-1 */
+}
+
+/* --- BRUTALIST MARQUEE --- */
+.marquee-container {
+    width: 100vw;
+    margin-left: calc(-1 * var(--margin)); /* Break out of safe container */
+    overflow: hidden;
+    display: flex;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none; /* Stops expensive hit-testing on the massive moving letters */
+}
+
+.marquee-track {
+    display: flex;
+    animation: marquee 20s linear infinite;
+    will-change: transform; 
+    transform: translateZ(0); /* Restores GPU hardware acceleration for the massive text block */
+}
+
+@keyframes marquee {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); } /* Hardware-accelerated infinite loop */
+}
+
+.marquee-track h1 {
+    font-size: clamp(100px, 16vw, 240px); /* Massive scaling */
+    font-weight: 200; /* Architectural thin lines */
+    line-height: 1;
+    margin: 0;
+    padding-right: 64px;
+    flex-shrink: 0;
+    color: transparent; /* Hollow wireframe effect everywhere */
+    -webkit-text-stroke: 2px var(--white); /* Thin outline */
+}
+
+.marquee-track h1::after {
+    content: '—'; /* Brutalist dash separator */
+    margin-left: 64px;
+    color: var(--gold);
+    -webkit-text-stroke: 0;
+}
+
+/* Ensures tagline maintains its editorial softness after reveal */
+.hero-tagline.reveal.active {
+    opacity: 0.7;
+}
+
+.hero-tagline.reveal.active::before {
+    transform: scaleX(1);
+}
+
+.hero-btns {
+    margin-top: 32px;
+    display: flex;
+    gap: 32px; /* Increased to accommodate harsh shadows */
+}
+
+.btn-primary, .btn-secondary, .btn-bold, .lang-switch span {
+    transition: transform 0.1s ease-out, background-color 0.1s ease-out, color 0.1s ease-out, border-color 0.1s ease-out, opacity 0.1s ease-out, box-shadow 0.1s ease-out;
+    -webkit-tap-highlight-color: transparent; /* Removes the default browser gray blink */
+}
+
+.btn-primary { font-family: var(--sans); background: var(--text); color: var(--bg); padding: 16px 48px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--text); box-shadow: 4px 4px 0px var(--gold); }
+.btn-secondary { font-family: var(--sans); background: transparent; border: 1px solid var(--white); color: var(--white); padding: 16px 48px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: none; }
+
+@media (hover: hover) {
+    .back-to-top:hover { 
+        color: var(--gold); 
+        background: var(--white);
+        border-color: var(--gold);
+    }
+
+    .logo:hover, 
+    .nav-links a:hover, 
+    .dropdown:hover .dropdown-trigger,
+    .lang-switch span:hover,
+    .theme-toggle:hover {
+        background-color: var(--text);
+        color: var(--bg) !important;
+        opacity: 1;
+        transition: none; /* Instant terminal highlight */
+    }
+
+    .btn-primary:hover {
+        background-color: var(--gold) !important;
+        color: var(--text) !important;
+        border-color: var(--gold) !important;
+        box-shadow: 0px 0px 0px var(--gold) !important;
+        transform: translate(4px, 4px) !important; /* Clean mechanical press */
+        opacity: 1;
+        transition: none; /* Instant brutalist reaction */
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--white) !important;
+        color: var(--black) !important;
+        border-style: solid !important;
+        transform: scale(0.98) !important;
+        opacity: 1;
+        transition: none;
+    }
+
+    .btn-bold:hover {
+        border-bottom-color: transparent;
+        transform: translateY(-2px);
+        color: var(--gold);
+    }
+}
+
+/* Momentary "Blink" effect on click/tap */
+.btn-primary:active {
+    background: var(--bg) !important; 
+    color: var(--text) !important; 
+    transform: translate(8px, 8px) scale(0.95) !important;
+    transition: none; /* Instant feedback for the blink */
+}
+
+.btn-secondary:active {
+    background: var(--gold) !important; 
+    color: #000000 !important; 
+    border-style: solid !important;
+    transform: scale(0.95) !important;
+    transition: none;
+}
+
+.back-to-top:active {
+    background: var(--gold) !important; /* The white background blinks gold */
+    border-color: var(--gold) !important;
+    color: var(--black) !important; /* The black text stays black */
+    transform: scale(0.97);
+    transition: none;
+}
+
+.lang-switch span:active {
+    color: var(--gold) !important;
+    opacity: 1 !important;
+    transform: scale(0.95);
+    transition: none;
+}
+
+/* Sections */
+section { 
+    padding: 96px 0; 
+    border-top: none;
+    width: 100%;
+    position: relative;
+    scroll-margin-top: 64px; /* Accounts for fixed header height */
+}
+
+/* --- ANIMATIONS --- */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered Reveal Delays */
+.reveal.delay-1 { transition-delay: 0.15s; }
+.reveal.delay-2 { transition-delay: 0.3s; }
+.reveal.delay-3 { transition-delay: 0.45s; }
+.reveal.delay-4 { transition-delay: 0.6s; }
+
+.bg-alt {
+    background-color: var(--alt-bg); /* Theme-aware background */
+}
+
+#highlights .container {
+    max-width: 1600px;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px; /* 1px gap draws the wireframe grid lines */
+    background-color: var(--text);
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-top: 1px solid var(--text);
+    border-bottom: 1px solid var(--text);
+    contain: layout; /* Helps Safari performance and stability */
+}
+
+.featured-item {
+    display: block;
+    position: relative;
+    overflow: visible; /* Allowed visible to let the hover shadow cast outside */
+    background-color: var(--surface);
+    aspect-ratio: 3 / 4; /* Eliminates layout thrashing by holding the shape while loading */
+}
+
+.featured-item img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: relative;
+    z-index: 1;
+    background-color: var(--surface);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.full-grid {
+    display: flex;
+    gap: 48px; /* Reduced from 80px for a tighter editorial look */
+    align-items: flex-start;
+}
+
+.portfolio-column {
+    flex: 1;
+    display: flex;
+    gap: 0; 
+    align-items: start;
+}
+
+/* Asymmetrical Stagger */
+.portfolio-column:nth-child(2) {
+    margin-top: 64px; /* Reduced to bring it higher while maintaining asymmetry */
+}
+
+.masonry-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.full-grid img { 
+    width: 100%; 
+    height: auto;
+    display: block;
+    background-color: var(--surface);
+    position: relative;
+    z-index: 1; /* Establishes clean stacking context */
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--text); /* Frames ONLY the images */
+}
+
+/* Image Hover Effects */
+.featured-item img:hover,
+.full-grid img:hover,
+.digitals-grid img:hover { 
+    z-index: 2; /* Elevates image above the wireframe grid lines */
+    opacity: 0.999; /* Force Safari layer redraw */
+    transform: scale(1.02); /* Physical lift makes the hover undeniable */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); /* Optimized shadow for buttery smooth interaction */
+}
+
+.video-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    position: relative;
+}
+
+.video-item {
+    display: block;
+    position: relative;
+    overflow: visible;
+    background: var(--bg);
+    border: 1px solid var(--text);
+    padding: 8px;
+}
+
+.video-item:nth-child(odd) {
+    width: 85%;
+    z-index: 1;
+}
+
+.video-item:nth-child(even) {
+    width: 65%;
+    align-self: flex-end;
+    margin-top: -6vw; /* Brutalist layout overlap */
+    z-index: 2;
+}
+
+.video-grid video, .video-grid iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: var(--surface);
+    object-fit: cover;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.15s ease-out;
+}
+
+.digitals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px; /* 1px gap draws the wireframe grid lines */
+    background-color: var(--text);
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-top: 1px solid var(--text);
+    border-bottom: 1px solid var(--text);
+    contain: layout; /* Helps Safari performance and stability */
+}
+
+.digitals-grid img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background-color: var(--bg); /* The physical polaroid paper color */
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Prevent visual drop-glitch when opening modals */
+@media (hover: hover) {
+    img.freeze-hover {
+        transform: scale(1.02) !important;
+        opacity: 0.85 !important;
+        z-index: 2 !important;
+    }
+    .full-grid img.freeze-hover {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    }
+    .digitals-grid img.freeze-hover {
+        transform: scale(1.03) !important;
+        opacity: 0.9 !important;
+    }
+}
+
+/* --- NATIVE APP TRANSITIONS --- */
+.app-transition-curtain {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: var(--bg);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+.app-transition-curtain.start-covered {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: none !important;
+}
+.app-transition-curtain.curtain-cover {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- BRUTALIST SPLASH SCREEN --- */
+.splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: var(--bg);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
+}
+.splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+.splash-logo {
+    font-family: var(--sans);
+    font-size: clamp(32px, 8vw, 80px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    color: var(--text);
+    opacity: 0;
+    animation: splashFadeInOut 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes splashFadeInOut {
+    0% { opacity: 0; transform: scale(0.95); }
+    20% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* Section Labels for UX */
+.section-label {
+    grid-column: span 12;
+    font-family: var(--sans);
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    opacity: 1; /* Ensures labels stay strictly black on white backgrounds */
+    margin-bottom: 64px; 
+    text-align: left; 
+    padding-left: 0; 
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 16px;
+}
+
+/* Center alignment override for Measurements */
+#measurements .section-label {
+    text-align: center;
+    padding-left: 0;
+    border-bottom: none;
+    justify-content: center;
+}
+
+/* --- 5. SUBPAGE HEADERS (Independent from Homepage) --- */
+.page-header {
+    font-family: var(--sans);
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    text-align: left;
+    margin-bottom: 48px;
+    position: relative;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-description {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400; /* Revert to standard terminal thickness */
+    line-height: 1.6;
+    opacity: 1;
+    color: var(--text);
+    text-align: left;
+}
+
+.editorial-quote {
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-transform: uppercase;
+    opacity: 1; 
+    text-align: left;
+}
+
+.editorial-quote::before,
+.editorial-quote::after {
+    color: var(--gold);
+    opacity: 0.7;
+    font-size: 1.2em;
+    transition: opacity 0.3s ease;
+}
+
+.editorial-quote::before { content: '“'; margin-right: 8px; margin-left: -0.5em; /* Hangs the quote mark outside to keep text perfectly flush left */ }
+.editorial-quote::after { content: '”'; margin-left: 8px; }
+
+#measurements {
+    padding: 48px 0;
+}
+
+.info-strip {
+    padding: 48px;
+    text-align: left;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 16px;
+    letter-spacing: 0;
+    opacity: 1;
+        background: #000000; /* Static terminal block */
+        color: #FFFFFF; /* Static terminal text */
+        border: 1px solid var(--text); /* Utility structural frame */
+    text-transform: uppercase;
+}
+
+.info-strip div {
+    padding-bottom: 12px;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.3); /* Static terminal underline */
+}
+
+.info-strip div span[id^="val-"] {
+    color: var(--gold); /* Highlight data values */
+    font-weight: 900;
+}
+
+/* --- 4. CALL TO ACTION & FOOTER --- */
+.cta-section {
+    text-align: center;
+    padding: 120px 0;
+    border-top: 1px solid var(--text); /* Clean structural line */
+}
+
+.btn-bold {
+    font-family: var(--sans);
+    display: inline-block;
+    border-bottom: 1px solid var(--text);
+    color: var(--text);
+    padding: 12px 0; /* Slightly more vertical padding */
+    margin: 24px 12px;
+    font-size: 15px; /* Slightly larger font */
+    text-transform: uppercase;
+    letter-spacing: 0.35em; /* More spread out */
+    min-width: 200px;
+    transition: all 0.1s ease-out;
+}
+
+.contact-list {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.contact-list .btn-bold {
+    margin: 12px 0; /* Horizontal spacing is now handled by gap */
+    min-width: 160px; /* More compact for a single-row feel */
+}
+
+/* --- 5. PAGE SPECIFIC LAYOUTS (About & Booking) --- */
+.split-layout {
+    display: flex;
+    gap: 64px;
+    align-items: flex-start;
+}
+.split-layout img { 
+    width: 40%; 
+    height: auto; 
+    border: 1px solid var(--text);
+    box-shadow: 8px 8px 0px var(--text);
+    position: relative;
+    z-index: 1;
+}
+.split-layout .bio { 
+    width: 50%; 
+    font-family: var(--mono); 
+    font-size: 16px; 
+    line-height: 1.6; 
+    color: var(--bg); /* Inverted terminal block */
+    background: var(--text);
+    border: 1px solid var(--text);
+    padding: 48px;
+    margin-top: 64px; /* Staggered offset relative to the image */
+    z-index: 2;
+}
+.split-layout .bio p { margin-bottom: 32px; }
+.split-layout .bio p:last-child { margin-bottom: 0; }
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+
+.modal.show-modal {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    cursor: default; /* Overrides the parent pointer to tell the browser it's not a button */
+    -webkit-touch-callout: default; /* Explicitly forces the long-press 'Save Image' menu on iOS */
+}
+
+/* Modal Navigation */
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 32px;
+    font-weight: 900; /* Brutalist heavy weight */
+    cursor: pointer;
+    padding: 48px;
+    user-select: none;
+    z-index: 2001;
+    transition: none; /* Instant brutalist snap */
+}
+.modal-nav:hover { color: var(--white); opacity: 1; }
+.modal-prev { left: 0; }
+.modal-next { right: 0; }
+
+@media (max-width: 390px) {
+    .modal-nav { padding: 20px; font-size: 24px; }
+}
+
+/* --- FOOTER TICKER --- */
+.footer-ticker {
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    white-space: nowrap;
+    user-select: none;
+    background: var(--gold);
+    padding: 16px 0;
+    border-top: 2px solid var(--text);
+    border-bottom: 2px solid var(--text);
+}
+
+.footer-ticker .ticker-track {
+    display: flex;
+    animation: marquee 15s linear infinite;
+    will-change: transform;
+}
+
+.footer-ticker span {
+    font-family: var(--sans);
+    font-size: 24px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding-right: 24px;
+    flex-shrink: 0;
+    color: #000000; /* Pure black text against the accent background */
+}
+
+/* Chaotic About Page Enhancements */
+.chaotic-clients {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 64px;
+}
+.chaotic-clients img {
+    filter: grayscale(100%) opacity(0.7);
+}
+
+.brutalist-quote-box {
+    padding: 64px;
+    border: 1px solid var(--text);
+    background: var(--gold);
+    box-shadow: 8px 8px 0px var(--text);
+    margin: 48px 0;
+}
+.brutalist-quote-box .editorial-quote { color: #000000; }
+.brutalist-quote-box .editorial-quote::before,
+.brutalist-quote-box .editorial-quote::after { color: var(--text); }
+
+footer {
+    padding: 128px 0 64px;
+    background-color: var(--black);
+    color: var(--white);
+    margin-top: 0;
+}
+
+.footer-column {
+    grid-column: span 4;
+}
+
+.footer-label {
+    font-family: var(--sans);
+    font-style: normal;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--gold-footer);
+    margin-bottom: 32px;
+}
+
+.footer-column a, .footer-column p {
+    font-size: 14px; /* Slightly larger due to mono proportions */
+    text-transform: uppercase;
+    letter-spacing: 0;
+    display: block;
+    margin-bottom: 16px;
+    color: var(--gold-footer);
+    opacity: 0.7; /* Increased opacity for better readability */
+    font-family: var(--mono);
+}
+
+.footer-column a {
+    width: fit-content; 
+    padding: 8px 16px; /* Invisible padding for a larger clickable area */
+    margin-left: -16px; /* Offsets the padding so text remains flush-left */
+    transition: all 0.1s ease-out;
+}
+
+.footer-column a:hover {
+    color: var(--gold-footer);
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.footer-bottom {
+    font-family: var(--mono);
+    grid-column: span 12;
+    text-align: center;
+    font-size: 12px;
+    color: var(--gold-footer);
+    opacity: 0.7; /* Reduced opacity to maintain visual hierarchy below footer columns */
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding-top: 16px;
+    margin-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footer-bottom .attribution {
+    margin-top: 8px;
+}
+
+.footer-bottom .designer-link {
+    display: inline;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.1s ease-out;
+}
+
+.footer-bottom .designer-link:hover {
+    color: var(--white);
+    border-bottom-color: var(--white);
+    opacity: 1;
+}
+
+/* --- 6. GLOBAL RESPONSIVENESS --- */
+
+/* Tablet & Small Laptops (1024px and below) */
+@media (max-width: 1024px) {
+    :root { --margin: 64px; }
+    h1 { font-size: 80px; }
+
+    /* Trigger Mobile Hamburger Menu on Tablets */
+    .mobile-toggle { display: flex; }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        transform: translateX(100%);
+        width: 100%;
+        height: 100vh;
+        background: var(--nav-bg);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Faster snap */
+        z-index: 1000;
+        padding: 96px 48px;
+        margin-left: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain; /* Stops background page drag */
+        touch-action: pan-y; /* Locks gestures strictly to vertical to prevent horizontal sliding */
+    }
+
+    nav.nav-open .nav-links { transform: translateX(0); }
+    nav.nav-open .logo { color: var(--text) !important; }
+    nav.nav-open .mobile-toggle span { background-color: var(--text) !important; }
+    nav.nav-open .nav-links a,
+    nav.nav-open .lang-switch,
+    nav.nav-open .theme-toggle { color: var(--text) !important; }
+    
+    /* Ensure the currently active page/section stays gold */
+    nav.nav-open .nav-links a.active,
+    nav.nav-open .dropdown-trigger.active { color: var(--gold) !important; }
+
+    /* Animate Hamburger to X */
+    nav.nav-open .mobile-toggle span:nth-child(1) { transform: translateY(4.5px) rotate(45deg); }
+    nav.nav-open .mobile-toggle span:nth-child(2) { transform: translateY(-4.5px) rotate(-45deg); }
+
+    .dropdown { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+    /* Editorial Mobile Typography */
+    .nav-links > a, .dropdown-trigger {
+        font-family: var(--serif) !important;
+        font-size: 24px !important;
+        font-style: italic;
+        text-transform: capitalize !important;
+        letter-spacing: 0.1em !important;
+        color: var(--text);
+        display: flex !important;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Animation for links when menu opens */
+    .nav-links > * {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.2s ease, transform 0s 0.3s, color 0s 0.3s !important;
+    }
+
+    nav.nav-open .nav-links > * { opacity: 1; transform: translateY(0); transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease !important; }
+    nav.nav-open .nav-links > *:nth-child(1) { transition-delay: 0.1s; }
+    nav.nav-open .nav-links > *:nth-child(2) { transition-delay: 0.2s; }
+    nav.nav-open .nav-links > *:nth-child(3) { transition-delay: 0.3s; }
+    nav.nav-open .nav-links > *:nth-child(4) { transition-delay: 0.4s; }
+    nav.nav-open .nav-links > *:nth-child(5) { transition-delay: 0.5s; }
+
+    /* Show sub-links on mobile as a clean, flat list without the "brick" container */
+    .dropdown-content {
+        position: static;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        opacity: 1;
+        visibility: visible;
+        transform: none !important; /* Overrides the desktop hover shift that jolts the block left */
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+        border: none;
+        padding: 8px 0 16px 0;
+    }
+
+    .dropdown-content a { font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.3em !important; opacity: 0.4; padding: 4px 0 !important; transform: none !important; transition-delay: 0s !important; }
+    .dropdown-content a.active { opacity: 1 !important; color: var(--gold) !important; }
+    .lang-switch { margin-top: 24px; font-size: 14px; }
+    .dropdown-trigger::after { display: none; }
+
+    /* Balancing About Page for Tablet/Small Laptops */
+    .split-layout { gap: 48px; }
+    .split-layout img { width: 48%; }
+    .split-layout .bio { width: 48%; margin-left: 0; margin-top: 48px; padding: 32px; }
+
+    /* Cal.com Widget & Booking Layout Adjustments for Tablets and below */
+    [id="my-cal-inline-booking-request"] { min-height: 600px !important; margin-top: 48px !important; }
+    .inquiry-section { margin-top: 64px !important; }
+}
+
+/* Small Tablets & Large Mobiles (768px and below) */
+@media (max-width: 768px) {
+    :root { --margin: 48px; --gutter: 16px; }
+    
+    h1 { font-size: 64px; }
+    h2 { font-size: 36px; margin-bottom: 48px; }
+    .page-header { font-size: 38px; }
+    
+    .container { grid-template-columns: 1fr; } /* Simplifies layout for tablets */
+
+    nav { padding: 0 24px; }
+
+    /* Grids */
+    .full-grid { grid-template-columns: repeat(3, 1fr); }
+    
+    .video-grid { gap: 32px; }
+    .video-item:nth-child(odd), .video-item:nth-child(even) {
+        width: 100%;
+        margin-top: 0; /* Reset overlap on mobile */
+        align-self: flex-start;
+    }
+    
+    /* About Page Bio */
+    .split-layout { flex-direction: column; gap: 48px; }
+    .split-layout img { width: 100%; transform: none; box-shadow: 8px 8px 0px var(--text); }
+    .split-layout .bio { width: 100%; margin-left: 0; margin-top: 0; padding: 24px; transform: rotate(1deg); box-shadow: 8px 8px 0px var(--gold); }
+    
+    /* Editorial Box Overrides */
+    [style*="padding: 100px"] { padding: 64px 24px !important; }
+    .editorial-quote { font-size: 24px; }
+
+    /* Client Logos */
+    [style*="gap: 120px"] { gap: 64px !important; }
+
+    .footer-ticker span { font-size: 18px; padding-right: 16px; }
+}
+
+/* Standard Mobile (480px and below) */
+@media (max-width: 480px) {
+    :root { --margin: 24px; }
+    
+    h1 { font-size: 38px; line-height: 1.1; letter-spacing: 0.02em; } /* Smaller to fit narrow screens */
+    .hero-tagline { font-size: 11px; letter-spacing: 0.3em; }
+    .page-header { font-size: 32px; margin-bottom: 32px; } /* Scales down subpage titles */
+    
+    nav { height: 64px; }
+    .btn-book { padding: 8px 16px; font-size: 12px; }
+    
+    .hero-btns { flex-direction: column; gap: 16px; }
+    .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.2em; }
+
+    section { padding: 48px 0; } /* Tighter vertical rhythm */
+    .section-label { font-size: 24px; padding-bottom: 16px; padding-left: 0; margin-bottom: 24px; margin-left: 0; }
+
+    /* Grid Resets */
+    .featured-grid { gap: 1px; } /* Ensures the 1px wireframe remains on mobile */
+    
+    /* CCTV Archive Grid Mobile */
+    .full-grid { 
+        display: block; 
+        column-count: 2; 
+        column-gap: 0;
+    } 
+    .portfolio-column, .masonry-col { display: contents; } 
+    .full-grid img { margin-bottom: 0; display: block; }
+
+    /* Measurements */
+    .info-strip { grid-template-columns: 1fr; gap: 16px; padding: 24px; font-size: 14px; }
+    
+    /* CTA & Footer */
+    .cta-section { padding: 96px 0; }
+    .btn-bold { min-width: unset; width: 70%; margin: 16px auto; font-size: 12px; letter-spacing: 0.25em; padding: 8px 0; }
+    
+    footer { padding: 96px 0 96px; }
+
+    /* Refine Bio Readability */
+    .split-layout .bio { 
+        font-size: 14px; 
+        line-height: 1.6; 
+    }
+
+    .footer-column, .footer-bottom { grid-column: span 1; }
+    .footer-label { margin-bottom: 24px; font-size: 18px; }
+
+    .contact-list { 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 16px; 
+    }
+    .contact-list .btn-bold { min-width: unset; width: 100%; margin: 8px 0; font-size: 11px; letter-spacing: 0.2em; }
+
+    .back-to-top {
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 16px;
+        font-size: 9px;
+    }
+
+    .footer-ticker { padding: 12px 0; }
+}
+
+/* --- 7. CUSTOM CURSOR --- */
+@media (hover: hover) {
+    /* Hide default cursor universally to prevent native pointers from showing */
+    html, body {
+        cursor: none;
+    }
+
+    .cursor-dot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9998; /* Punches through UI/modals but stays gracefully behind splash and curtains */
+        transition: opacity 0.3s ease;
+        will-change: transform;
+    }
+
+    .cursor-dot svg {
+        width: 20px; /* Reduced for a standard desktop feel */
+        height: auto;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    /* Hides the custom arrow instantly so the native OS link pointer can take over */
+    .cursor-dot.hover {
+        opacity: 0 !important;
+        transition: none !important;
+    }
+
+    /* Reveal the native OS pointer for interactive elements and images */
+    a, a *, button, button *, .dropdown-trigger, .dropdown-trigger *, .lang-switch span, .lang-switch span *, .theme-toggle, .theme-toggle *, .back-to-top, .back-to-top *, .modal-nav, img, .mobile-toggle, .mobile-toggle * {
+        cursor: pointer !important;
+    }
+
+    .cursor-radar {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9997;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--gold);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: radarPing 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes radarPing {
+        0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; border-width: 4px; }
+        100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 1px; }
+    }
+}
