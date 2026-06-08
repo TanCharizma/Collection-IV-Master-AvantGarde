@@ -101,54 +101,23 @@
     const navLinks = navElement.querySelector('.nav-links');
     const getHeaderOffset = () => Math.ceil((navElement && navElement.getBoundingClientRect().height) || 64);
     const getAnchorTargetY = (targetElement) => {
-        const visualTarget = targetElement.querySelector('.section-label') || targetElement;
-        const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
+        const targetTop = targetElement.getBoundingClientRect().top + window.scrollY;
 
         return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
-    const closeMenuForAnchorScroll = () => {
-        if (!navLinks) {
-            navElement.classList.remove('nav-open');
-            document.body.style.overflow = '';
-            return Promise.resolve();
-        }
-
-        return new Promise((resolve) => {
-            let didResolve = false;
-            const finish = () => {
-                if (didResolve) return;
-                didResolve = true;
-                navLinks.removeEventListener('transitionend', onTransitionEnd);
-                resolve();
-            };
-            const onTransitionEnd = (event) => {
-                if (event.target === navLinks && event.propertyName === 'transform') {
-                    finish();
-                }
-            };
-
-            navLinks.addEventListener('transitionend', onTransitionEnd);
-            navElement.classList.remove('nav-open');
-            document.body.style.overflow = '';
-            window.setTimeout(finish, 460);
-        });
-    };
-    const waitForNextPaint = () => {
-        return new Promise(resolve => {
-            requestAnimationFrame(() => requestAnimationFrame(resolve));
-        });
+    const closeMobileMenu = () => {
+        navElement.classList.remove('nav-open');
+        document.body.style.overflow = '';
     };
     function scrollToAnchor(targetId, behavior = 'smooth') {
         const target = document.querySelector(targetId);
         if (!target) return;
 
-        waitForNextPaint().then(() => {
-            window.scrollTo({
-                top: getAnchorTargetY(target),
-                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : behavior
-            });
-            history.replaceState(null, null, targetId);
+        window.scrollTo({
+            top: getAnchorTargetY(target),
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : behavior
         });
+        history.replaceState(null, null, targetId);
     }
 
     if (mobileToggle) {
@@ -162,8 +131,7 @@
                 if (!navElement.classList.contains('nav-open')) return;
                 if (e.target.closest('a, .lang-switch, .theme-toggle')) return;
 
-                navElement.classList.remove('nav-open');
-                document.body.style.overflow = '';
+                closeMobileMenu();
             });
         }
 
@@ -178,13 +146,13 @@
                     const targetId = href.substring(href.indexOf('#'));
 
                     if (navElement.classList.contains('nav-open')) {
-                        closeMenuForAnchorScroll().then(() => scrollToAnchor(targetId));
+                        closeMobileMenu();
+                        setTimeout(() => scrollToAnchor(targetId), 100);
                     } else {
                         scrollToAnchor(targetId);
                     }
                 } else if (navElement.classList.contains('nav-open')) {
-                    navElement.classList.remove('nav-open');
-                    document.body.style.overflow = '';
+                    closeMobileMenu();
                 }
             });
         });
@@ -192,15 +160,14 @@
         // Cleanup: Ensure body scroll is restored if window is resized while menu is open
         window.addEventListener('resize', () => {
             if (window.innerWidth > 1024 && navElement.classList.contains('nav-open')) {
-                navElement.classList.remove('nav-open');
-                document.body.style.overflow = '';
+                closeMobileMenu();
             }
         });
     }
 
     if (isHomePage && window.location.hash) {
         window.addEventListener('load', () => {
-            window.setTimeout(() => scrollToAnchor(window.location.hash, 'auto'), 60);
+            requestAnimationFrame(() => scrollToAnchor(window.location.hash, 'auto'));
         }, { once: true });
     }
 
