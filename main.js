@@ -6,7 +6,9 @@
 // --- SILENT SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        const isLocalPreview = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+        const hostname = window.location.hostname;
+        const isPrivateNetwork = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(hostname);
+        const isLocalPreview = ['localhost', '127.0.0.1', '::1'].includes(hostname) || hostname.endsWith('.local') || isPrivateNetwork;
         if (isLocalPreview) {
             navigator.serviceWorker.getRegistrations()
                 .then(registrations => registrations.forEach(registration => registration.unregister()))

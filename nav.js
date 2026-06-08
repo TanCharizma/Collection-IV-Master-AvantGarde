@@ -106,6 +106,30 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
+    const waitForAnchorLayout = (targetElement) => {
+        return new Promise((resolve) => {
+            let lastY = getAnchorTargetY(targetElement);
+            let stableFrames = 0;
+            let frames = 0;
+            const maxFrames = 30;
+
+            const check = () => {
+                const nextY = getAnchorTargetY(targetElement);
+                stableFrames = Math.abs(nextY - lastY) < 1 ? stableFrames + 1 : 0;
+                lastY = nextY;
+                frames += 1;
+
+                if (stableFrames >= 5 || frames >= maxFrames) {
+                    resolve();
+                    return;
+                }
+
+                requestAnimationFrame(check);
+            };
+
+            requestAnimationFrame(check);
+        });
+    };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
             navElement.classList.remove('nav-open');
@@ -219,7 +243,12 @@
                         e.preventDefault();
                         const targetId = href.substring(href.indexOf('#'));
 
-                        closeMenuForAnchorScroll().then(() => scrollToAnchorTarget(targetId));
+                        closeMenuForAnchorScroll()
+                            .then(() => {
+                                const targetElement = document.querySelector(targetId);
+                                return targetElement ? waitForAnchorLayout(targetElement) : Promise.resolve();
+                            })
+                            .then(() => scrollToAnchorTarget(targetId));
                     } else {
                         navElement.classList.remove('nav-open');
                         document.body.style.overflow = '';
