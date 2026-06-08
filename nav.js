@@ -110,14 +110,50 @@
         document.body.style.overflow = '';
     };
     function scrollToAnchor(targetId, behavior = 'smooth') {
+        if (!targetId || targetId === '#') return;
+
         const target = document.querySelector(targetId);
         if (!target) return;
 
-        window.scrollTo({
-            top: getAnchorTargetY(target),
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : behavior
-        });
         history.replaceState(null, null, targetId);
+
+        if (behavior === 'auto' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            window.scrollTo(0, getAnchorTargetY(target));
+            return;
+        }
+
+        let isUserScrolling = false;
+        const stopCorrection = () => { isUserScrolling = true; };
+        ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
+            window.addEventListener(evt, stopCorrection, { once: true, passive: true });
+        });
+
+        let currentY = window.scrollY;
+        let lastTime = performance.now();
+
+        const scrollLoop = (time) => {
+            if (isUserScrolling) return;
+
+            const dt = time - lastTime;
+            lastTime = time;
+            const targetY = getAnchorTargetY(target);
+            const diff = targetY - currentY;
+
+            if (Math.abs(diff) < 1) {
+                window.scrollTo(0, targetY);
+                return;
+            }
+
+            const lerpFactor = 1 - Math.exp(-0.002 * dt);
+            currentY += diff * lerpFactor;
+            window.scrollTo(0, currentY);
+            requestAnimationFrame(scrollLoop);
+        };
+
+        requestAnimationFrame((time) => {
+            lastTime = time;
+            scrollLoop(time);
+        });
     }
 
     if (mobileToggle) {
@@ -167,7 +203,29 @@
 
     if (isHomePage && window.location.hash) {
         window.addEventListener('load', () => {
-            requestAnimationFrame(() => scrollToAnchor(window.location.hash, 'auto'));
+            const target = document.querySelector(window.location.hash);
+            if (!target) return;
+
+            let isUserScrolling = false;
+            const stopCorrection = () => { isUserScrolling = true; };
+            ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
+                window.addEventListener(evt, stopCorrection, { once: true, passive: true });
+            });
+
+            let trackingActive = true;
+            const trackTarget = () => {
+                if (isUserScrolling || !trackingActive) return;
+
+                const targetY = getAnchorTargetY(target);
+                if (Math.abs(window.scrollY - targetY) > 2) {
+                    window.scrollTo(0, targetY);
+                }
+
+                requestAnimationFrame(trackTarget);
+            };
+
+            trackTarget();
+            setTimeout(() => { trackingActive = false; }, 3000);
         }, { once: true });
     }
 
