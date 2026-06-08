@@ -1352,9 +1352,17 @@ section {
     display: inline-flex;
 }
 
-.modal-caption-toggle:hover,
-.modal-fullscreen-toggle:hover {
-    background: var(--gold);
+@media (hover: hover) and (pointer: fine) {
+    .modal-caption-toggle:hover,
+    .modal-fullscreen-toggle:hover {
+        background: var(--gold);
+        color: var(--text);
+    }
+}
+
+.modal-caption-toggle:active,
+.modal-fullscreen-toggle:active {
+    background: var(--bg);
     color: var(--text);
 }
 
