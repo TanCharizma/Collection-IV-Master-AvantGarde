@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const splashScreen = document.getElementById('splash-screen');
-        const minSplashTime = new Promise(resolve => setTimeout(resolve, 800)); // Snappier brand entrance
+        const minSplashTime = new Promise(resolve => setTimeout(resolve, 2000)); // Minimum 2s immersive brand entrance
         
         const heroImageLoad = new Promise(resolve => {
             const heroImgLoader = new Image();
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         document.body.style.overflow = ''; // Unlock scrolling
                         triggerHeroEntrance();
-                }, 300); // Trigger hero text reveal smoothly as splash screen fades
+                    }, 400); // Trigger hero text reveal exactly halfway through the splash screen fade-out
                 });
             }
         } else {
@@ -214,6 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (heroScrollHint) {
+                    // Disable the 0.8s CSS reveal transition so it fades instantly with the scroll wheel
+                    if (heroScrollHint.style.transition !== 'none') {
+                        heroScrollHint.style.transition = 'none';
+                    }
                     heroScrollHint.style.opacity = (fadeProgress * 0.72).toFixed(3);
                     
                     if (isHidden) {

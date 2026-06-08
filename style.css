@@ -538,7 +538,7 @@ body.lang-th .lang-switch .th::after {
 
 .marquee-track {
     display: flex;
-    animation: marquee 28s linear infinite;
+    animation: marquee 20s linear infinite;
     will-change: transform; 
     transform: translateZ(0); /* Restores GPU hardware acceleration for the massive text block */
 }
@@ -549,14 +549,14 @@ body.lang-th .lang-switch .th::after {
 }
 
 .marquee-track h1 {
-    font-size: clamp(72px, 11vw, 160px); /* Large editorial scale without overloading the compositor */
+    font-size: clamp(100px, 16vw, 240px); /* Massive scaling */
     font-weight: 200; /* Architectural thin lines */
     line-height: 1;
     margin: 0;
     padding-right: 64px;
     flex-shrink: 0;
     color: transparent; /* Hollow wireframe effect everywhere */
-    -webkit-text-stroke: 1px var(--white); /* Lighter outline paints more smoothly */
+    -webkit-text-stroke: 2px var(--white); /* Thin outline */
 }
 
 .marquee-track h1::after {
@@ -624,7 +624,16 @@ body.lang-th .lang-switch .th::after {
     width: 100%;
     height: 40%;
     background: var(--gold);
+    animation: none;
+}
+
+.scroll-hint.reveal.active .scroll-hint__line::after,
+.scroll-hint:not(.reveal) .scroll-hint__line::after {
     animation: scrollHintTrace 1.7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.hero-scroll-hint.delay-2.reveal.active .scroll-hint__line::after {
+    animation-delay: 0.3s;
 }
 
 .hero-scroll-hint {
@@ -974,8 +983,7 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s;
-    will-change: opacity;
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
 }
 .splash-screen.hidden {
     opacity: 0;
@@ -989,7 +997,7 @@ section {
     letter-spacing: -0.05em;
     color: var(--text);
     opacity: 0;
-    animation: splashFadeInOut 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: splashFadeInOut 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes splashFadeInOut {
     0% { opacity: 0; transform: scale(0.95); }
