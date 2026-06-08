@@ -124,23 +124,28 @@
 
                     if (isSamePageHash) {
                         e.preventDefault(); // Prevent premature jump while layout is locked by overflow: hidden
-                        navElement.classList.remove('nav-open');
-                        document.body.style.overflow = '';
 
                         const targetId = href.substring(href.indexOf('#'));
                         const targetElement = document.querySelector(targetId);
 
+                        let targetY = 0;
                         if (targetElement) {
-                            // Allow browser layout to repaint after unlocking scroll before jumping natively
+                            const headerOffset = navElement.offsetHeight || 64;
+                            // Calculate target destination BEFORE unlocking layout to prevent mobile reflow thrashing
+                            targetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
+                        }
+
+                        navElement.classList.remove('nav-open');
+                        document.body.style.overflow = '';
+
+                        if (targetElement) {
                             setTimeout(() => {
-                                const headerOffset = navElement.offsetHeight || 64;
-                                const targetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
                                 window.scrollTo({
                                     top: targetY,
                                     behavior: 'smooth'
                                 });
                                 history.replaceState(null, null, targetId);
-                            }, 100);
+                            }, 50);
                         }
                     } else {
                         navElement.classList.remove('nav-open');
