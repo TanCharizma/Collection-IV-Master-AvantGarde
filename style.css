@@ -1738,6 +1738,7 @@ footer {
 
     /* Grids */
     .featured-grid { grid-template-columns: repeat(2, 1fr); }
+    .digitals-grid { grid-template-columns: repeat(2, 1fr); }
     .full-grid { grid-template-columns: repeat(3, 1fr); }
     
     .video-grid { gap: 32px; }
@@ -1808,7 +1809,11 @@ footer {
     .section-label { font-size: 24px; padding-bottom: 16px; padding-left: 0; margin-bottom: 24px; margin-left: 0; }
 
     /* Grid Resets */
-    .featured-grid { grid-template-columns: repeat(2, 1fr); gap: 1px; } /* Ensures the 1px wireframe remains on mobile */
+    .featured-grid,
+    .digitals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1px;
+    } /* Ensures the 1px wireframe remains on mobile */
     
     /* CCTV Archive Grid Mobile */
     .full-grid { 

@@ -241,6 +241,20 @@
     // Offset-aware anchor navigation (Homepage Only)
     if (isHomePage) {
         document.addEventListener('DOMContentLoaded', () => {
+            const headerOffset = 64;
+            const getTargetY = (targetElement) => {
+                return Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - headerOffset);
+            };
+            const correctAnchorLanding = (targetElement) => {
+                const correctedY = getTargetY(targetElement);
+                if (Math.abs(window.scrollY - correctedY) > 2) {
+                    window.scrollTo({
+                        top: correctedY,
+                        behavior: 'smooth'
+                    });
+                }
+            };
+
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 if (anchor.classList.contains('back-to-top')) return;
                 
@@ -253,13 +267,15 @@
                         
                         const executeScroll = () => {
                             // Calculate target destination once to avoid layout-thrashing drift.
-                            const targetY = Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - 64);
+                            const targetY = getTargetY(targetElement);
 
                             window.scrollTo({
                                 top: targetY,
                                 behavior: 'smooth'
                             });
 
+                            window.setTimeout(() => correctAnchorLanding(targetElement), 450);
+                            window.setTimeout(() => correctAnchorLanding(targetElement), 900);
                             history.replaceState(null, null, targetId);
                         };
 
@@ -281,8 +297,9 @@
                 
                 if (targetElement) {
                     window.addEventListener('load', () => {
-                        const targetY = Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - 64);
+                        const targetY = getTargetY(targetElement);
                         window.scrollTo({ top: targetY, behavior: 'auto' });
+                        window.setTimeout(() => correctAnchorLanding(targetElement), 250);
                     }, { once: true });
                 }
             }
