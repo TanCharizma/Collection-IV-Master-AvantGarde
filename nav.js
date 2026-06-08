@@ -106,20 +106,44 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 12);
     };
+    const correctAnchorAfterScrollSettles = (targetElement) => {
+        let lastY = window.scrollY;
+        let stableFrames = 0;
+        let frames = 0;
+        const maxFrames = 150;
+
+        const check = () => {
+            const currentY = window.scrollY;
+            const isStable = Math.abs(currentY - lastY) < 1;
+            stableFrames = isStable ? stableFrames + 1 : 0;
+            lastY = currentY;
+            frames += 1;
+
+            if (stableFrames >= 8 || frames >= maxFrames) {
+                const correctedY = getAnchorTargetY(targetElement);
+                if (Math.abs(window.scrollY - correctedY) > 4) {
+                    window.scrollTo({
+                        top: correctedY,
+                        behavior: 'auto'
+                    });
+                }
+                return;
+            }
+
+            requestAnimationFrame(check);
+        };
+
+        requestAnimationFrame(check);
+    };
     const scrollToAnchorTarget = (targetId, behavior = 'smooth') => {
         const targetElement = document.querySelector(targetId);
         if (!targetElement) return;
 
-        const land = (nextBehavior = behavior) => {
-            window.scrollTo({
-                top: getAnchorTargetY(targetElement),
-                behavior: nextBehavior
-            });
-        };
-
-        land();
-        window.setTimeout(() => land('smooth'), 700);
-        window.setTimeout(() => land('smooth'), 1400);
+        window.scrollTo({
+            top: getAnchorTargetY(targetElement),
+            behavior
+        });
+        correctAnchorAfterScrollSettles(targetElement);
         history.replaceState(null, null, targetId);
     };
 
