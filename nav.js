@@ -104,7 +104,7 @@
         const visualTarget = targetElement.querySelector('.section-label') || targetElement;
         const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
 
-        return Math.max(0, targetTop - getHeaderOffset() - 29);
+        return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
@@ -152,10 +152,14 @@
 
         const previousScrollBehavior = document.documentElement.style.scrollBehavior;
         const previousBodyScrollBehavior = document.body.style.scrollBehavior;
+        const previousOverflowAnchor = document.documentElement.style.overflowAnchor;
+        const previousBodyOverflowAnchor = document.body.style.overflowAnchor;
         const duration = Math.min(1450, Math.max(760, 620 + (distance * 0.16)));
         const startTime = performance.now();
         document.documentElement.style.scrollBehavior = 'auto';
         document.body.style.scrollBehavior = 'auto';
+        document.documentElement.style.overflowAnchor = 'none';
+        document.body.style.overflowAnchor = 'none';
 
         const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
 
@@ -163,6 +167,8 @@
             if (scrollToken !== activeAnchorScroll) {
                 document.documentElement.style.scrollBehavior = previousScrollBehavior;
                 document.body.style.scrollBehavior = previousBodyScrollBehavior;
+                document.documentElement.style.overflowAnchor = previousOverflowAnchor;
+                document.body.style.overflowAnchor = previousBodyOverflowAnchor;
                 return;
             }
 
@@ -178,6 +184,8 @@
 
             document.documentElement.style.scrollBehavior = previousScrollBehavior;
             document.body.style.scrollBehavior = previousBodyScrollBehavior;
+            document.documentElement.style.overflowAnchor = previousOverflowAnchor;
+            document.body.style.overflowAnchor = previousBodyOverflowAnchor;
         };
 
         requestAnimationFrame(animate);
