@@ -104,7 +104,27 @@
         const visualTarget = targetElement.querySelector('.section-label') || targetElement;
         const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
 
-        return Math.max(0, targetTop - getHeaderOffset() - 4);
+        return Math.max(0, targetTop - getHeaderOffset() - 24);
+    };
+    const closeMenuForAnchorScroll = () => {
+        if (!navLinks) {
+            navElement.classList.remove('nav-open');
+            document.body.style.overflow = '';
+            return Promise.resolve();
+        }
+
+        const previousTransition = navLinks.style.transition;
+        navLinks.style.transition = 'none';
+        navElement.classList.remove('nav-open');
+        document.body.style.overflow = '';
+        navLinks.getBoundingClientRect();
+
+        return new Promise((resolve) => {
+            requestAnimationFrame(() => {
+                navLinks.style.transition = previousTransition;
+                requestAnimationFrame(resolve);
+            });
+        });
     };
     let activeAnchorScroll = 0;
     const scrollToAnchorTarget = (targetId) => {
@@ -118,28 +138,31 @@
         const distance = Math.abs(targetY - startY);
 
         if (prefersReducedMotion || distance < 8) {
-            window.scrollTo(0, targetY);
+            window.scrollTo({ top: targetY, behavior: 'auto' });
             history.replaceState(null, null, targetId);
             return;
         }
 
         const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-        const duration = Math.min(1350, Math.max(680, 520 + (distance * 0.18)));
+        const previousBodyScrollBehavior = document.body.style.scrollBehavior;
+        const duration = Math.min(1500, Math.max(820, 640 + (distance * 0.14)));
         const startTime = performance.now();
         document.documentElement.style.scrollBehavior = 'auto';
+        document.body.style.scrollBehavior = 'auto';
 
         const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
 
         const animate = (now) => {
             if (scrollToken !== activeAnchorScroll) {
                 document.documentElement.style.scrollBehavior = previousScrollBehavior;
+                document.body.style.scrollBehavior = previousBodyScrollBehavior;
                 return;
             }
 
             const progress = Math.min((now - startTime) / duration, 1);
             const eased = easeInOutSine(progress);
             const nextY = startY + ((targetY - startY) * eased);
-            window.scrollTo(0, nextY);
+            window.scrollTo({ top: nextY, behavior: 'auto' });
 
             if (progress < 1) {
                 requestAnimationFrame(animate);
@@ -148,9 +171,10 @@
 
             const finalY = getAnchorTargetY(targetElement);
             if (Math.abs(window.scrollY - finalY) > 4) {
-                window.scrollTo(0, finalY);
+                window.scrollTo({ top: finalY, behavior: 'auto' });
             }
             document.documentElement.style.scrollBehavior = previousScrollBehavior;
+            document.body.style.scrollBehavior = previousBodyScrollBehavior;
         };
 
         requestAnimationFrame(animate);
@@ -184,9 +208,7 @@
                         e.preventDefault();
                         const targetId = href.substring(href.indexOf('#'));
 
-                        navElement.classList.remove('nav-open');
-                        document.body.style.overflow = '';
-                        setTimeout(() => scrollToAnchorTarget(targetId), 140);
+                        closeMenuForAnchorScroll().then(() => scrollToAnchorTarget(targetId));
                     } else {
                         navElement.classList.remove('nav-open');
                         document.body.style.overflow = '';

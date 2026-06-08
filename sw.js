@@ -1,4 +1,4 @@
-const CACHE_NAME = 'avantgarde-portfolio-v49';
+const CACHE_NAME = 'avantgarde-portfolio-v50';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
