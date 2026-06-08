@@ -105,48 +105,110 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
+    let savedInlineScrollBehavior = null;
+    const forceInstantScrollBehavior = () => {
+        const root = document.documentElement;
+
+        if (savedInlineScrollBehavior === null) {
+            savedInlineScrollBehavior = root.style.scrollBehavior;
+        }
+
+        root.style.scrollBehavior = 'auto';
+    };
+    const restoreInstantScrollBehavior = () => {
+        if (savedInlineScrollBehavior === null) return;
+
+        const root = document.documentElement;
+
+        if (savedInlineScrollBehavior) {
+            root.style.scrollBehavior = savedInlineScrollBehavior;
+        } else {
+            root.style.removeProperty('scroll-behavior');
+        }
+
+        savedInlineScrollBehavior = null;
+    };
+    const instantScrollTo = (top) => {
+        forceInstantScrollBehavior();
+        window.scrollTo(0, top);
+        restoreInstantScrollBehavior();
+    };
     const closeMobileMenu = () => {
         navElement.classList.remove('nav-open');
         document.body.style.overflow = '';
     };
+    let activeAnchorScroll = 0;
     function scrollToAnchor(targetId, behavior = 'smooth') {
         if (!targetId || targetId === '#') return;
 
         const target = document.querySelector(targetId);
         if (!target) return;
 
+        const scrollRun = ++activeAnchorScroll;
         history.replaceState(null, null, targetId);
 
         if (behavior === 'auto' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            window.scrollTo(0, getAnchorTargetY(target));
+            instantScrollTo(getAnchorTargetY(target));
             return;
         }
 
+        forceInstantScrollBehavior();
+
+        const restoreScrollBehavior = () => {
+            if (scrollRun !== activeAnchorScroll) return;
+
+            restoreInstantScrollBehavior();
+        };
+
         let isUserScrolling = false;
-        const stopCorrection = () => { isUserScrolling = true; };
+        const stopCorrection = () => {
+            isUserScrolling = true;
+            restoreScrollBehavior();
+        };
         ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
             window.addEventListener(evt, stopCorrection, { once: true, passive: true });
         });
 
-        let currentY = window.scrollY;
-        let lastTime = performance.now();
+        const startTime = performance.now();
+        const minTrackTime = window.innerWidth <= 768 ? 1400 : 650;
+        let stableFrames = 0;
+        let lastTime = startTime;
 
         const scrollLoop = (time) => {
-            if (isUserScrolling) return;
-
-            const dt = time - lastTime;
-            lastTime = time;
-            const targetY = getAnchorTargetY(target);
-            const diff = targetY - currentY;
-
-            if (Math.abs(diff) < 1) {
-                window.scrollTo(0, targetY);
+            if (isUserScrolling || scrollRun !== activeAnchorScroll) {
+                restoreScrollBehavior();
                 return;
             }
 
-            const lerpFactor = 1 - Math.exp(-0.014 * dt);
-            currentY += diff * lerpFactor;
-            window.scrollTo(0, currentY);
+            const dt = Math.min(32, time - lastTime || 16);
+            lastTime = time;
+            const currentY = window.scrollY;
+            const targetY = getAnchorTargetY(target);
+            const diff = targetY - currentY;
+            const elapsed = time - startTime;
+            const isMobileScroll = window.innerWidth <= 768;
+            const distance = Math.abs(diff);
+            const stopThreshold = isMobileScroll ? 1.25 : 0.6;
+
+            if (distance < stopThreshold) {
+                window.scrollTo(0, targetY);
+
+                stableFrames++;
+                if (elapsed >= minTrackTime && stableFrames >= 8) {
+                    restoreScrollBehavior();
+                    return;
+                }
+
+                requestAnimationFrame(scrollLoop);
+                return;
+            }
+
+            stableFrames = 0;
+            const speed = isMobileScroll
+                ? (elapsed < 240 ? 0.024 : 0.016)
+                : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
+            const lerpFactor = 1 - Math.exp(-speed * dt);
+            window.scrollTo(0, currentY + diff * lerpFactor);
             requestAnimationFrame(scrollLoop);
         };
 
@@ -218,7 +280,7 @@
 
                 const targetY = getAnchorTargetY(target);
                 if (Math.abs(window.scrollY - targetY) > 2) {
-                    window.scrollTo(0, targetY);
+                    instantScrollTo(targetY);
                 }
 
                 requestAnimationFrame(trackTarget);
