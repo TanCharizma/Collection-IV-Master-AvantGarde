@@ -876,8 +876,8 @@ section {
 }
 
 .full-grid img { 
-    width: 100%; 
-    height: auto;
+    width: 100%;
+    /* height: auto; Removed to force strict aspect-ratio calculation before load */
     aspect-ratio: var(--portfolio-aspect, 2 / 3);
     object-fit: cover;
     display: block;

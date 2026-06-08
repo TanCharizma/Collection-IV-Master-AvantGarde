@@ -148,7 +148,7 @@
 
         Promise.all(imagePromises).then(() => {
             requestAnimationFrame(() => {
-                const navHeight = getHeaderOffset();
+                const navHeight = 64; // Actual pixel height of fixed navigation bar
                 const offset = target.getBoundingClientRect().top + window.scrollY - navHeight;
                 window.scrollTo({ top: offset, behavior: 'smooth' });
                 history.replaceState(null, null, targetId);
@@ -175,20 +175,21 @@
         // Close menu when a link is clicked
         navElement.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', (e) => {
-                if (navElement.classList.contains('nav-open')) {
-                    const href = link.getAttribute('href');
-                    const isSamePageHash = href && (href.startsWith('#') || (isHomePage && href.startsWith('index.html#')));
+                const href = link.getAttribute('href');
+                const isSamePageHash = href && (href.startsWith('#') || (isHomePage && href.startsWith('index.html#')));
 
-                    if (isSamePageHash) {
-                        e.preventDefault();
-                        const targetId = href.substring(href.indexOf('#'));
+                if (isSamePageHash) {
+                    e.preventDefault(); // Intercept all hash links
+                    const targetId = href.substring(href.indexOf('#'));
 
-                        closeMenuForAnchorScroll()
-                            .then(() => scrollToAnchor(targetId));
+                    if (navElement.classList.contains('nav-open')) {
+                        closeMenuForAnchorScroll().then(() => scrollToAnchor(targetId));
                     } else {
-                        navElement.classList.remove('nav-open');
-                        document.body.style.overflow = '';
+                        scrollToAnchor(targetId); // Force desktop/native clicks to wait for images too
                     }
+                } else if (navElement.classList.contains('nav-open')) {
+                    navElement.classList.remove('nav-open');
+                    document.body.style.overflow = '';
                 }
             });
         });
