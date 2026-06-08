@@ -133,7 +133,12 @@
                         if (targetElement) {
                             // Allow browser layout to repaint after unlocking scroll before jumping natively
                             setTimeout(() => {
-                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                                const headerOffset = navElement.offsetHeight || 64;
+                                const targetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
+                                window.scrollTo({
+                                    top: targetY,
+                                    behavior: 'smooth'
+                                });
                                 history.replaceState(null, null, targetId);
                             }, 100);
                         }
