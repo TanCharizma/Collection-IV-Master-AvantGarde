@@ -118,12 +118,10 @@
         // Close menu when a link is clicked
         navElement.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
-                const href = link.getAttribute('href');
-                // If it's a home page hash link, let the interceptor handle the closing to prevent iOS GPU panic
-                if (isHomePage && href && href.startsWith('#')) return;
-
-                navElement.classList.remove('nav-open');
-                document.body.style.overflow = '';
+                if (navElement.classList.contains('nav-open')) {
+                    navElement.classList.remove('nav-open');
+                    document.body.style.overflow = '';
+                }
             });
         });
 
@@ -247,82 +245,6 @@
             requestAnimationFrame(renderCursor);
         };
         requestAnimationFrame(renderCursor);
-    }
-
-    // Offset-aware anchor navigation (Homepage Only)
-    if (isHomePage) {
-        document.addEventListener('DOMContentLoaded', () => {
-            const getHeaderOffset = () => {
-                return Math.ceil((navElement && navElement.getBoundingClientRect().height) || 64);
-            };
-            const getTargetY = (targetElement, isFromMobileMenu = false) => {
-                const visualTarget = targetElement.querySelector('.section-label') || targetElement;
-                const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
-                const needsMobileMenuRoom = isFromMobileMenu && window.innerWidth <= 768;
-                const anchorBreathingRoom = visualTarget === targetElement ? 0 : (needsMobileMenuRoom ? 32 : 8);
-
-                return Math.max(0, targetTop - getHeaderOffset() - anchorBreathingRoom);
-            };
-            const correctAnchorLanding = (targetElement, isFromMobileMenu = false) => {
-                const correctedY = getTargetY(targetElement, isFromMobileMenu);
-                if (Math.abs(window.scrollY - correctedY) > 2) {
-                    window.scrollTo({
-                        top: correctedY,
-                        behavior: 'smooth'
-                    });
-                }
-            };
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                if (anchor.classList.contains('back-to-top')) return;
-                
-                anchor.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    
-                    if (targetElement) {
-                        e.preventDefault();
-                        const isFromMobileMenu = !!(navElement && navElement.classList.contains('nav-open'));
-                        
-                        const executeScroll = () => {
-                            // Calculate target destination once to avoid layout-thrashing drift.
-                            const targetY = getTargetY(targetElement, isFromMobileMenu);
-
-                            window.scrollTo({
-                                top: targetY,
-                                behavior: 'smooth'
-                            });
-
-                            window.setTimeout(() => correctAnchorLanding(targetElement, isFromMobileMenu), 450);
-                            window.setTimeout(() => correctAnchorLanding(targetElement, isFromMobileMenu), 900);
-                            history.replaceState(null, null, targetId);
-                        };
-
-                        if (navElement && navElement.classList.contains('nav-open')) {
-                            navElement.classList.remove('nav-open');
-                            document.body.style.overflow = '';
-                            // Delay scroll by 100ms to prevent iOS Safari compositor crash after body unlock reflow
-                            setTimeout(executeScroll, 100);
-                        } else {
-                            executeScroll();
-                        }
-                    }
-                });
-            });
-
-            // Align cross-page hash arrivals with the fixed header.
-            if (window.location.hash) {
-                const targetElement = document.querySelector(window.location.hash);
-                
-                if (targetElement) {
-                    window.addEventListener('load', () => {
-                        const targetY = getTargetY(targetElement);
-                        window.scrollTo({ top: targetY, behavior: 'auto' });
-                        window.setTimeout(() => correctAnchorLanding(targetElement), 250);
-                    }, { once: true });
-                }
-            }
-        });
     }
 
     // --- CROSS-PAGE CINEMATIC TRANSITIONS ---
