@@ -117,10 +117,30 @@
 
         // Close menu when a link is clicked
         navElement.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
                 if (navElement.classList.contains('nav-open')) {
-                    navElement.classList.remove('nav-open');
-                    document.body.style.overflow = '';
+                    const href = link.getAttribute('href');
+                    const isSamePageHash = href && (href.startsWith('#') || (isHomePage && href.startsWith('index.html#')));
+
+                    if (isSamePageHash) {
+                        e.preventDefault(); // Prevent premature jump while layout is locked by overflow: hidden
+                        navElement.classList.remove('nav-open');
+                        document.body.style.overflow = '';
+
+                        const targetId = href.substring(href.indexOf('#'));
+                        const targetElement = document.querySelector(targetId);
+
+                        if (targetElement) {
+                            // Allow browser layout to repaint after unlocking scroll before jumping natively
+                            setTimeout(() => {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                                history.replaceState(null, null, targetId);
+                            }, 100);
+                        }
+                    } else {
+                        navElement.classList.remove('nav-open');
+                        document.body.style.overflow = '';
+                    }
                 }
             });
         });
