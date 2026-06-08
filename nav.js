@@ -106,44 +106,56 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 12);
     };
-    const correctAnchorAfterScrollSettles = (targetElement) => {
-        let lastY = window.scrollY;
-        let stableFrames = 0;
-        let frames = 0;
-        const maxFrames = 150;
-
-        const check = () => {
-            const currentY = window.scrollY;
-            const isStable = Math.abs(currentY - lastY) < 1;
-            stableFrames = isStable ? stableFrames + 1 : 0;
-            lastY = currentY;
-            frames += 1;
-
-            if (stableFrames >= 8 || frames >= maxFrames) {
-                const correctedY = getAnchorTargetY(targetElement);
-                if (Math.abs(window.scrollY - correctedY) > 4) {
-                    window.scrollTo({
-                        top: correctedY,
-                        behavior: 'auto'
-                    });
-                }
-                return;
-            }
-
-            requestAnimationFrame(check);
-        };
-
-        requestAnimationFrame(check);
-    };
-    const scrollToAnchorTarget = (targetId, behavior = 'smooth') => {
+    let activeAnchorScroll = 0;
+    const scrollToAnchorTarget = (targetId) => {
         const targetElement = document.querySelector(targetId);
         if (!targetElement) return;
 
-        window.scrollTo({
-            top: getAnchorTargetY(targetElement),
-            behavior
-        });
-        correctAnchorAfterScrollSettles(targetElement);
+        const scrollToken = ++activeAnchorScroll;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const startY = window.scrollY;
+        const targetY = getAnchorTargetY(targetElement);
+        const distance = Math.abs(targetY - startY);
+
+        if (prefersReducedMotion || distance < 8) {
+            window.scrollTo(0, targetY);
+            history.replaceState(null, null, targetId);
+            return;
+        }
+
+        const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+        const duration = Math.min(1100, Math.max(560, distance * 0.28));
+        const startTime = performance.now();
+        document.documentElement.style.scrollBehavior = 'auto';
+
+        const easeInOutCubic = (t) => {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        };
+
+        const animate = (now) => {
+            if (scrollToken !== activeAnchorScroll) {
+                document.documentElement.style.scrollBehavior = previousScrollBehavior;
+                return;
+            }
+
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = easeInOutCubic(progress);
+            const nextY = startY + ((targetY - startY) * eased);
+            window.scrollTo(0, nextY);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const finalY = getAnchorTargetY(targetElement);
+            if (Math.abs(window.scrollY - finalY) > 4) {
+                window.scrollTo(0, finalY);
+            }
+            document.documentElement.style.scrollBehavior = previousScrollBehavior;
+        };
+
+        requestAnimationFrame(animate);
         history.replaceState(null, null, targetId);
     };
 
