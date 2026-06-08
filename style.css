@@ -440,6 +440,7 @@ body.lang-th .lang-switch .th::after {
 /* --- 3. HOMEPAGE SPECIFIC SECTIONS --- */
 .hero {
     height: 100vh;
+    height: 100svh; /* Prevents height jumping and layout shifting when mobile address bar hides */
     display: flex;
     align-items: flex-end;
     padding: var(--margin);

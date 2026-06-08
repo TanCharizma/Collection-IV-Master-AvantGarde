@@ -134,15 +134,35 @@
                         if (targetElement) {
                             setTimeout(() => {
                                 const headerOffset = navElement.offsetHeight || 64;
-                                // Calculate target destination AFTER unlocking layout so mobile browsers report true coordinates
-                                const targetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
+                                const startY = window.scrollY;
+                                let startTime = null;
                                 
-                                window.scrollTo({
-                                    top: targetY,
-                                    behavior: 'smooth'
-                                });
-                                history.replaceState(null, null, targetId);
-                            }, 100);
+                                // Disable CSS smooth scroll to allow precise JS frame-by-frame tracking
+                                document.documentElement.style.scrollBehavior = 'auto';
+                                
+                                const scrollLoop = (currentTime) => {
+                                    if (!startTime) startTime = currentTime;
+                                    const timeElapsed = currentTime - startTime;
+                                    const progress = Math.min(timeElapsed / 600, 1);
+                                    
+                                    // Easing function (easeInOutCubic)
+                                    const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                                    
+                                    // Continuously recalculate destination to flawlessly track layout shifts from lazy-loading images
+                                    const dynamicTargetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
+                                    
+                                    window.scrollTo(0, startY + (dynamicTargetY - startY) * ease);
+                                    
+                                    if (progress < 1) {
+                                        requestAnimationFrame(scrollLoop);
+                                    } else {
+                                        window.scrollTo(0, dynamicTargetY); // Final pixel-perfect snap
+                                        document.documentElement.style.scrollBehavior = ''; // Restore CSS
+                                        history.replaceState(null, null, targetId);
+                                    }
+                                };
+                                requestAnimationFrame(scrollLoop);
+                            }, 50);
                         }
                     } else {
                         navElement.classList.remove('nav-open');
