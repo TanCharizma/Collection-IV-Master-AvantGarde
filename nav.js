@@ -104,7 +104,7 @@
         const visualTarget = targetElement.querySelector('.section-label') || targetElement;
         const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
 
-        return Math.max(0, targetTop - getHeaderOffset() - 6);
+        return Math.max(0, targetTop - getHeaderOffset() - 29);
     };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
@@ -150,30 +150,37 @@
             return;
         }
 
-        window.scrollTo({
-            top: targetY,
-            behavior: 'smooth'
-        });
+        const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+        const previousBodyScrollBehavior = document.body.style.scrollBehavior;
+        const duration = Math.min(1450, Math.max(760, 620 + (distance * 0.16)));
+        const startTime = performance.now();
+        document.documentElement.style.scrollBehavior = 'auto';
+        document.body.style.scrollBehavior = 'auto';
 
-        const settleStart = performance.now();
-        const settle = () => {
-            if (scrollToken !== activeAnchorScroll) return;
+        const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
 
-            const correctedY = getAnchorTargetY(targetElement);
-            const isClose = Math.abs(window.scrollY - correctedY) <= 4;
-            const timedOut = performance.now() - settleStart > 1800;
-
-            if (isClose || timedOut) {
-                if (!isClose) {
-                    window.scrollTo({ top: correctedY, behavior: 'auto' });
-                }
+        const animate = (now) => {
+            if (scrollToken !== activeAnchorScroll) {
+                document.documentElement.style.scrollBehavior = previousScrollBehavior;
+                document.body.style.scrollBehavior = previousBodyScrollBehavior;
                 return;
             }
 
-            requestAnimationFrame(settle);
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = easeInOutSine(progress);
+            const nextY = startY + ((targetY - startY) * eased);
+            window.scrollTo({ top: nextY, behavior: 'auto' });
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            document.documentElement.style.scrollBehavior = previousScrollBehavior;
+            document.body.style.scrollBehavior = previousBodyScrollBehavior;
         };
 
-        requestAnimationFrame(settle);
+        requestAnimationFrame(animate);
         history.replaceState(null, null, targetId);
     };
 
