@@ -362,13 +362,105 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById("imageModal");
     if (modal) {
         const modalImg = document.getElementById("img01");
+        const modalCaption = document.getElementById("imageModalCaption");
+        const modalCaptionKicker = document.getElementById("imageModalCaptionKicker");
+        const modalCaptionEn = document.getElementById("imageModalCaptionEn");
+        const modalCaptionTh = document.getElementById("imageModalCaptionTh");
+        const modalCaptionToggle = document.getElementById("imageModalCaptionToggle");
+        const modalCaptionToggleEn = document.getElementById("imageModalCaptionToggleEn");
+        const modalCaptionToggleTh = document.getElementById("imageModalCaptionToggleTh");
+        const modalFullscreenToggle = document.getElementById("imageModalFullscreenToggle");
+        const modalFullscreenToggleEn = document.getElementById("imageModalFullscreenToggleEn");
+        const modalFullscreenToggleTh = document.getElementById("imageModalFullscreenToggleTh");
         let currentSectionImages = [];
         let currentImgIndex = 0;
+        let visitorCaptionsEnabled = localStorage.getItem('imageCaptionsVisible') !== 'false';
+        let currentCaptionSrc = '';
+        let modalIsImmersive = false;
+
+        const normalizeCaptionPath = (src) => {
+            try {
+                return new URL(src, window.location.href).pathname.replace(/^\/+/, '');
+            } catch (error) {
+                return src.replace(/^\/+/, '');
+            }
+        };
+
+        const updateCaption = (src) => {
+            if (!modalCaption) return;
+
+            const captionsEnabled = window.CLIENT_CONFIG && window.CLIENT_CONFIG.showImageCaptions === true;
+            const captions = (window.CLIENT_CONFIG && window.CLIENT_CONFIG.imageCaptions) || {};
+            const caption = captions[normalizeCaptionPath(src)];
+            const hasCaptionData = !!(caption && (
+                (caption.en && caption.en.trim()) ||
+                (caption.th && caption.th.trim())
+            ));
+            const shouldShowCaption = captionsEnabled && visitorCaptionsEnabled && hasCaptionData;
+            currentCaptionSrc = src;
+
+            if (modalCaptionToggle) {
+                modalCaptionToggle.classList.toggle('visible', captionsEnabled);
+                modalCaptionToggle.setAttribute('aria-pressed', visitorCaptionsEnabled ? 'true' : 'false');
+            }
+            if (modalCaptionToggleEn) modalCaptionToggleEn.textContent = visitorCaptionsEnabled ? 'Captions: On' : 'Captions: Off';
+            if (modalCaptionToggleTh) modalCaptionToggleTh.textContent = visitorCaptionsEnabled ? 'คำบรรยาย: เปิด' : 'คำบรรยาย: ปิด';
+
+            modalCaption.classList.toggle('visible', shouldShowCaption);
+            modalCaption.setAttribute('aria-hidden', shouldShowCaption ? 'false' : 'true');
+
+            if (!shouldShowCaption) {
+                if (modalCaptionKicker) modalCaptionKicker.textContent = '';
+                if (modalCaptionEn) modalCaptionEn.textContent = '';
+                if (modalCaptionTh) modalCaptionTh.textContent = '';
+                return;
+            }
+
+            if (modalCaptionKicker) modalCaptionKicker.textContent = caption.kicker || '';
+            if (modalCaptionEn) modalCaptionEn.textContent = caption.en || '';
+            if (modalCaptionTh) modalCaptionTh.textContent = caption.th || caption.en || '';
+        };
+
+        const syncFullscreenToggle = () => {
+            modalIsImmersive = !!document.fullscreenElement || modal.classList.contains('is-immersive');
+            if (!modalFullscreenToggle) return;
+
+            modalFullscreenToggle.classList.toggle('visible', modal.classList.contains('show-modal') && !modalIsImmersive);
+            modalFullscreenToggle.setAttribute('aria-pressed', modalIsImmersive ? 'true' : 'false');
+            if (modalFullscreenToggleEn) modalFullscreenToggleEn.textContent = modalIsImmersive ? 'Exit Fullscreen' : 'Fullscreen';
+            if (modalFullscreenToggleTh) modalFullscreenToggleTh.textContent = modalIsImmersive ? 'ออกจากเต็มจอ' : 'เต็มจอ';
+        };
+
+        const enterImmersiveMode = async () => {
+            modal.classList.add('is-immersive');
+            syncFullscreenToggle();
+
+            if (modal.requestFullscreen) {
+                try {
+                    await modal.requestFullscreen({ navigationUI: 'hide' });
+                } catch (error) {
+                    // Keep the CSS immersive fallback even when real fullscreen is unavailable.
+                }
+            }
+        };
+
+        const exitImmersiveMode = async () => {
+            modal.classList.remove('is-immersive');
+
+            if (document.fullscreenElement && document.exitFullscreen) {
+                try {
+                    await document.exitFullscreen();
+                } catch (error) {}
+            }
+
+            syncFullscreenToggle();
+        };
         
         const updateModal = (index, direction = 0, isOpening = false) => {
             const finalizeUpdate = () => {
                 currentImgIndex = index;
                 const newSrc = currentSectionImages[currentImgIndex].src;
+                updateCaption(newSrc);
                 
                 const playAnimation = () => {
                     document.querySelector('.modal-prev').style.visibility = currentImgIndex === 0 ? 'hidden' : 'visible';
@@ -451,6 +543,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalImg.style.opacity = '0';
                 
                 modal.classList.add('show-modal');
+                if (modalFullscreenToggle) modalFullscreenToggle.classList.add('visible');
+                syncFullscreenToggle();
                 updateModal(currentSectionImages.indexOf(img), 0, true);
                 lockScroll();
             });
@@ -458,10 +552,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelector('.modal-prev').onclick = (e) => { e.stopPropagation(); updateModal(currentImgIndex - 1, -1); };
         document.querySelector('.modal-next').onclick = (e) => { e.stopPropagation(); updateModal(currentImgIndex + 1, 1); };
-        modalImg.onclick = (e) => e.stopPropagation();
+        modalImg.onclick = (e) => {
+            e.stopPropagation();
+            if (modalIsImmersive) exitImmersiveMode();
+        };
+        if (modalCaption) modalCaption.onclick = (e) => e.stopPropagation();
+        if (modalCaptionToggle) {
+            modalCaptionToggle.onclick = (e) => {
+                e.stopPropagation();
+                visitorCaptionsEnabled = !visitorCaptionsEnabled;
+                localStorage.setItem('imageCaptionsVisible', visitorCaptionsEnabled ? 'true' : 'false');
+                updateCaption(currentCaptionSrc);
+            };
+        }
+        if (modalFullscreenToggle) {
+            modalFullscreenToggle.onclick = (e) => {
+                e.stopPropagation();
+                modalIsImmersive ? exitImmersiveMode() : enterImmersiveMode();
+            };
+        }
         
         const closeModal = () => {
+            exitImmersiveMode();
             modal.classList.remove('show-modal');
+            if (modalCaption) modalCaption.classList.remove('visible');
+            if (modalCaptionToggle) modalCaptionToggle.classList.remove('visible');
+            if (modalFullscreenToggle) modalFullscreenToggle.classList.remove('visible');
             unlockScroll();
             // Clear transforms for next open
             setTimeout(() => {
@@ -471,14 +587,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         };
         
-        modal.onclick = closeModal;
+        modal.onclick = () => {
+            modalIsImmersive ? exitImmersiveMode() : closeModal();
+        };
 
         document.addEventListener('keydown', (e) => {
             if (modal.classList.contains('show-modal')) {
-                if (e.key === 'Escape') closeModal();
+                if (e.key === 'Escape') {
+                    modalIsImmersive ? exitImmersiveMode() : closeModal();
+                }
                 if (e.key === 'ArrowLeft' && currentImgIndex > 0) updateModal(currentImgIndex - 1, -1);
                 if (e.key === 'ArrowRight' && currentImgIndex < currentSectionImages.length - 1) updateModal(currentImgIndex + 1, 1);
             }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                modal.classList.remove('is-immersive');
+            }
+            syncFullscreenToggle();
         });
         
         // Mobile Touch Swipe Navigation

@@ -326,6 +326,13 @@
         inject('clientNameHero', window.CLIENT_CONFIG.name);
         inject('taglineEn', window.CLIENT_CONFIG.taglineEn);
         inject('taglineTh', window.CLIENT_CONFIG.taglineTh);
+
+        const splashCaption = document.getElementById('splashCaption');
+        if (splashCaption) {
+            const captionText = window.CLIENT_CONFIG.splashCaption || '';
+            splashCaption.textContent = captionText;
+            splashCaption.style.display = captionText ? '' : 'none';
+        }
         
         if (window.CLIENT_CONFIG.measurements) {
             inject('val-height', window.CLIENT_CONFIG.measurements.height);

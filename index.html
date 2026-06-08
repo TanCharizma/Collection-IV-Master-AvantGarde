@@ -56,7 +56,10 @@
 
     <!-- BRUTALIST SPLASH SCREEN -->
     <div id="splash-screen" class="splash-screen">
-        <div class="splash-logo client-name-marquee"></div>
+        <div class="splash-stack">
+            <div class="splash-logo client-name-marquee"></div>
+            <div class="splash-caption" id="splashCaption"></div>
+        </div>
     </div>
     <script>
         (function() {
@@ -287,6 +290,21 @@
     <div id="imageModal" class="modal">
         <span class="modal-nav modal-prev">&#10094;</span>
         <img class="modal-content" id="img01">
+        <div class="modal-caption" id="imageModalCaption" aria-live="polite">
+            <div class="modal-caption__kicker" id="imageModalCaptionKicker"></div>
+            <div class="modal-caption__text">
+                <span lang="en" id="imageModalCaptionEn"></span>
+                <span lang="th" id="imageModalCaptionTh"></span>
+            </div>
+        </div>
+        <button type="button" class="modal-caption-toggle" id="imageModalCaptionToggle" aria-pressed="true">
+            <span lang="en" id="imageModalCaptionToggleEn">Captions: On</span>
+            <span lang="th" id="imageModalCaptionToggleTh">คำบรรยาย: เปิด</span>
+        </button>
+        <button type="button" class="modal-fullscreen-toggle" id="imageModalFullscreenToggle" aria-pressed="false">
+            <span lang="en" id="imageModalFullscreenToggleEn">Fullscreen</span>
+            <span lang="th" id="imageModalFullscreenToggleTh">เต็มจอ</span>
+        </button>
         <span class="modal-nav modal-next">&#10095;</span>
     </div>
 
