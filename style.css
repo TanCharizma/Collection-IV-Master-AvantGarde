@@ -43,14 +43,24 @@
 
 html {
     width: 100%;
+    max-width: 100%;
     scrollbar-width: thin;
     scrollbar-color: var(--text) var(--bg);
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
     overflow-x: hidden;
     width: 100%;
+    max-width: 100%;
+}
+
+@supports (overflow: clip) {
+    html,
+    body {
+        overflow-x: clip;
+    }
 }
 
 * {
@@ -58,6 +68,12 @@ body {
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent; /* Removes the default mobile browser gray tap blink universally */
+}
+
+img,
+video,
+iframe {
+    max-width: 100%;
 }
 
 body {
@@ -132,11 +148,21 @@ a:hover { opacity: 0.7; }
 /* Grid System */
 .container {
     max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 var(--margin);
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: var(--gutter);
+}
+
+.container > *,
+.hero-content,
+.hero-text-block,
+.portfolio-column,
+.masonry-col,
+.nav-links {
+    min-width: 0;
 }
 
 /* --- 2. NAVIGATION BAR --- */
@@ -1676,6 +1702,16 @@ footer {
         justify-content: center;
     }
 
+    .hero-btns .btn-primary,
+    .hero-btns .btn-secondary {
+        width: min(240px, calc(100vw - (var(--margin) * 2)));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+    }
+
     .marquee-container {
         width: 100vw;
         margin-left: calc(50% - 50vw);
@@ -1751,6 +1787,10 @@ footer {
     }
 
     .hero-btns { flex-direction: column; align-items: center; gap: 16px; }
+    .hero-btns .btn-primary,
+    .hero-btns .btn-secondary {
+        width: min(220px, calc(100vw - 48px));
+    }
     .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.2em; }
     .hero-scroll-hint, .about-scroll-hint { right: 24px; bottom: 24px; }
     .scroll-hint { gap: 10px; font-size: 9px; letter-spacing: 0.26em; }
