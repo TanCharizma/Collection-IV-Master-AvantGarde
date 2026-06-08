@@ -99,6 +99,30 @@
     // Mobile Menu Logic
     const mobileToggle = navElement.querySelector('#mobileToggle');
     const navLinks = navElement.querySelector('.nav-links');
+    const getHeaderOffset = () => Math.ceil((navElement && navElement.getBoundingClientRect().height) || 64);
+    const getAnchorTargetY = (targetElement) => {
+        const visualTarget = targetElement.querySelector('.section-label') || targetElement;
+        const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
+
+        return Math.max(0, targetTop - getHeaderOffset() - 12);
+    };
+    const scrollToAnchorTarget = (targetId, behavior = 'smooth') => {
+        const targetElement = document.querySelector(targetId);
+        if (!targetElement) return;
+
+        const land = (nextBehavior = behavior) => {
+            window.scrollTo({
+                top: getAnchorTargetY(targetElement),
+                behavior: nextBehavior
+            });
+        };
+
+        land();
+        window.setTimeout(() => land('smooth'), 700);
+        window.setTimeout(() => land('smooth'), 1400);
+        history.replaceState(null, null, targetId);
+    };
+
     if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
             navElement.classList.toggle('nav-open');
@@ -123,47 +147,12 @@
                     const isSamePageHash = href && (href.startsWith('#') || (isHomePage && href.startsWith('index.html#')));
 
                     if (isSamePageHash) {
-                        e.preventDefault(); // Prevent premature jump while layout is locked by overflow: hidden
-
+                        e.preventDefault();
                         const targetId = href.substring(href.indexOf('#'));
-                        const targetElement = document.querySelector(targetId);
 
                         navElement.classList.remove('nav-open');
                         document.body.style.overflow = '';
-
-                        if (targetElement) {
-                            setTimeout(() => {
-                                const headerOffset = navElement.offsetHeight || 64;
-                                const startY = window.scrollY;
-                                let startTime = null;
-                                
-                                // Disable CSS smooth scroll to allow precise JS frame-by-frame tracking
-                                document.documentElement.style.scrollBehavior = 'auto';
-                                
-                                const scrollLoop = (currentTime) => {
-                                    if (!startTime) startTime = currentTime;
-                                    const timeElapsed = currentTime - startTime;
-                                    const progress = Math.min(timeElapsed / 600, 1);
-                                    
-                                    // Easing function (easeInOutCubic)
-                                    const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                                    
-                                    // Continuously recalculate destination to flawlessly track layout shifts from lazy-loading images
-                                    const dynamicTargetY = targetElement.getBoundingClientRect().top + window.scrollY - headerOffset;
-                                    
-                                    window.scrollTo(0, startY + (dynamicTargetY - startY) * ease);
-                                    
-                                    if (progress < 1) {
-                                        requestAnimationFrame(scrollLoop);
-                                    } else {
-                                        window.scrollTo(0, dynamicTargetY); // Final pixel-perfect snap
-                                        document.documentElement.style.scrollBehavior = ''; // Restore CSS
-                                        history.replaceState(null, null, targetId);
-                                    }
-                                };
-                                requestAnimationFrame(scrollLoop);
-                            }, 50);
-                        }
+                        setTimeout(() => scrollToAnchorTarget(targetId), 140);
                     } else {
                         navElement.classList.remove('nav-open');
                         document.body.style.overflow = '';
