@@ -104,7 +104,7 @@
         const visualTarget = targetElement.querySelector('.section-label') || targetElement;
         const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
 
-        return Math.max(0, targetTop - getHeaderOffset() - 24);
+        return Math.max(0, targetTop - getHeaderOffset() - 6);
     };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
@@ -113,17 +113,24 @@
             return Promise.resolve();
         }
 
-        const previousTransition = navLinks.style.transition;
-        navLinks.style.transition = 'none';
-        navElement.classList.remove('nav-open');
-        document.body.style.overflow = '';
-        navLinks.getBoundingClientRect();
-
         return new Promise((resolve) => {
-            requestAnimationFrame(() => {
-                navLinks.style.transition = previousTransition;
-                requestAnimationFrame(resolve);
-            });
+            let didResolve = false;
+            const finish = () => {
+                if (didResolve) return;
+                didResolve = true;
+                navLinks.removeEventListener('transitionend', onTransitionEnd);
+                resolve();
+            };
+            const onTransitionEnd = (event) => {
+                if (event.target === navLinks && event.propertyName === 'transform') {
+                    finish();
+                }
+            };
+
+            navLinks.addEventListener('transitionend', onTransitionEnd);
+            navElement.classList.remove('nav-open');
+            document.body.style.overflow = '';
+            window.setTimeout(finish, 460);
         });
     };
     let activeAnchorScroll = 0;
@@ -143,41 +150,30 @@
             return;
         }
 
-        const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-        const previousBodyScrollBehavior = document.body.style.scrollBehavior;
-        const duration = Math.min(1500, Math.max(820, 640 + (distance * 0.14)));
-        const startTime = performance.now();
-        document.documentElement.style.scrollBehavior = 'auto';
-        document.body.style.scrollBehavior = 'auto';
+        window.scrollTo({
+            top: targetY,
+            behavior: 'smooth'
+        });
 
-        const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
+        const settleStart = performance.now();
+        const settle = () => {
+            if (scrollToken !== activeAnchorScroll) return;
 
-        const animate = (now) => {
-            if (scrollToken !== activeAnchorScroll) {
-                document.documentElement.style.scrollBehavior = previousScrollBehavior;
-                document.body.style.scrollBehavior = previousBodyScrollBehavior;
+            const correctedY = getAnchorTargetY(targetElement);
+            const isClose = Math.abs(window.scrollY - correctedY) <= 4;
+            const timedOut = performance.now() - settleStart > 1800;
+
+            if (isClose || timedOut) {
+                if (!isClose) {
+                    window.scrollTo({ top: correctedY, behavior: 'auto' });
+                }
                 return;
             }
 
-            const progress = Math.min((now - startTime) / duration, 1);
-            const eased = easeInOutSine(progress);
-            const nextY = startY + ((targetY - startY) * eased);
-            window.scrollTo({ top: nextY, behavior: 'auto' });
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-                return;
-            }
-
-            const finalY = getAnchorTargetY(targetElement);
-            if (Math.abs(window.scrollY - finalY) > 4) {
-                window.scrollTo({ top: finalY, behavior: 'auto' });
-            }
-            document.documentElement.style.scrollBehavior = previousScrollBehavior;
-            document.body.style.scrollBehavior = previousBodyScrollBehavior;
+            requestAnimationFrame(settle);
         };
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(settle);
         history.replaceState(null, null, targetId);
     };
 
