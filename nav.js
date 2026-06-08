@@ -133,28 +133,23 @@
             window.setTimeout(finish, 460);
         });
     };
-    function scrollToAnchor(targetId) {
+    const waitForNextPaint = () => {
+        return new Promise(resolve => {
+            requestAnimationFrame(() => requestAnimationFrame(resolve));
+        });
+    };
+    function scrollToAnchor(targetId, behavior = 'smooth') {
         const target = document.querySelector(targetId);
         if (!target) return;
 
-        const images = document.querySelectorAll('.full-grid img');
-        const imagePromises = Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.addEventListener('load', resolve, { once: true });
-                img.addEventListener('error', resolve, { once: true });
+        waitForNextPaint().then(() => {
+            window.scrollTo({
+                top: getAnchorTargetY(target),
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : behavior
             });
+            history.replaceState(null, null, targetId);
         });
-
-        Promise.all(imagePromises).then(() => {
-            requestAnimationFrame(() => {
-                const navHeight = 64; // Actual pixel height of fixed navigation bar
-                const offset = target.getBoundingClientRect().top + window.scrollY - navHeight;
-                window.scrollTo({ top: offset, behavior: 'smooth' });
-                history.replaceState(null, null, targetId);
-            });
-        });
-    };
+    }
 
     if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
@@ -185,7 +180,7 @@
                     if (navElement.classList.contains('nav-open')) {
                         closeMenuForAnchorScroll().then(() => scrollToAnchor(targetId));
                     } else {
-                        scrollToAnchor(targetId); // Force desktop/native clicks to wait for images too
+                        scrollToAnchor(targetId);
                     }
                 } else if (navElement.classList.contains('nav-open')) {
                     navElement.classList.remove('nav-open');
@@ -201,6 +196,12 @@
                 document.body.style.overflow = '';
             }
         });
+    }
+
+    if (isHomePage && window.location.hash) {
+        window.addEventListener('load', () => {
+            window.setTimeout(() => scrollToAnchor(window.location.hash, 'auto'), 60);
+        }, { once: true });
     }
 
     // Theme Switching Logic
