@@ -52,7 +52,7 @@
 <body>
 
     <script src="nav.js"></script>
-    <section style="padding-top: 96px; border-top: none;">
+    <section class="about-intro" style="padding-top: 96px; border-top: none;">
         <div class="container">
             <div style="grid-column: span 12;">
                 <h2 class="page-header reveal">
@@ -72,11 +72,18 @@
                         <p lang="th">[Client Thai Bio Paragraph 3]</p>
                     </div>
                 </div>
+                <a href="#about-clients" class="scroll-hint about-scroll-hint reveal delay-2" aria-label="Scroll to clients">
+                    <span class="scroll-hint__text">
+                        <span lang="en">Scroll</span>
+                        <span lang="th">เลื่อน</span>
+                    </span>
+                    <span class="scroll-hint__line" aria-hidden="true"></span>
+                </a>
             </div>
         </div>
     </section>
 
-    <section class="container" style="background: var(--surface);">
+    <section id="about-clients" class="container" style="background: var(--surface);">
         <div style="grid-column: span 12; padding: 96px 0;">
             <h2 class="reveal" style="font-size: 20px; letter-spacing: 0.4em; text-align: center;">
                 <span lang="en">Clients</span>

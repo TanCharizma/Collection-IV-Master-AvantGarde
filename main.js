@@ -6,6 +6,14 @@
 // --- SILENT SERVICE WORKER REGISTRATION ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+        const isLocalPreview = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+        if (isLocalPreview) {
+            navigator.serviceWorker.getRegistrations()
+                .then(registrations => registrations.forEach(registration => registration.unregister()))
+                .catch(() => {});
+            return;
+        }
+
         navigator.serviceWorker.register('/sw.js')
             .catch(error => console.error('Service Worker registration failed:', error));
     });
@@ -108,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Hero Entrance & Parallax
         const heroSection = document.getElementById('hero');
         const heroBg = document.querySelector('.hero-bg');
+        const heroBgFrame = document.querySelector('.hero-bg-frame');
         const heroContent = document.querySelector('.hero-content');
         
         // Automatically extract the image URL defined in the HTML inline style
@@ -126,12 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
             heroEntranceStartTime = performance.now();
             setTimeout(() => {
                 heroEntranceComplete = true;
-                if (heroBg) heroBg.style.animation = 'none'; // Safely clear CSS animation to pass hardware control to JS
+                if (heroBgFrame) heroBgFrame.style.animation = 'none'; // Keep the wrapper settled after the intro zoom
             }, 1500); // Reduced to 1500ms for a much faster, smoother come-in
         };
 
         const splashScreen = document.getElementById('splash-screen');
-        const minSplashTime = new Promise(resolve => setTimeout(resolve, 2000)); // Minimum 2s immersive brand entrance
+        const minSplashTime = new Promise(resolve => setTimeout(resolve, 800)); // Snappier brand entrance
         
         const heroImageLoad = new Promise(resolve => {
             const heroImgLoader = new Image();
@@ -157,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         document.body.style.overflow = ''; // Unlock scrolling
                         triggerHeroEntrance();
-                    }, 400); // Trigger hero text reveal exactly halfway through the splash screen fade-out
+                }, 300); // Trigger hero text reveal smoothly as splash screen fades
                 });
             }
         } else {
@@ -170,11 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', () => isDesktop = window.innerWidth > 768, { passive: true });
         
         const heroTextBlock = document.querySelector('.hero-text-block');
+        const heroScrollHint = document.querySelector('.hero-scroll-hint');
 
         let rafId = null;
-        let isScrolling = false;
 
-        const renderHeroParallax = (time) => {
+        const renderHeroParallax = () => {
             const currentScrollY = window.scrollY; // Zero-cost compositor read
 
             // Only update DOM if the scroll value actually changed and is within range
@@ -182,47 +191,79 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (heroBg && heroEntranceComplete) {
                     if (isDesktop) {
                         // .toFixed() limits string length to prevent sub-pixel float parsing lag
-                        const scrollScale = (1 + (currentScrollY / vh) * 0.4).toFixed(4); 
-                        const parallax = (currentScrollY * 0.15).toFixed(2);
+                        const scrollScale = (1 + (currentScrollY / vh) * 0.18).toFixed(4); 
+                        const parallax = (currentScrollY * 0.08).toFixed(2);
                         heroBg.style.transform = `translate3d(0, ${parallax}px, 0) scale3d(${scrollScale}, ${scrollScale}, 1)`;
                     } else {
-                        const scrollScale = (1 + (currentScrollY / vh) * 0.15).toFixed(4);
+                        const scrollScale = (1 + (currentScrollY / vh) * 0.08).toFixed(4);
                         heroBg.style.transform = `translateZ(0) scale3d(${scrollScale}, ${scrollScale}, 1)`;
                     }
-                    }
+                }
+                
+                const fadeProgress = Math.max(0.001, 1 - (currentScrollY / (vh * 0.6)));
+                const isHidden = fadeProgress <= 0.01;
+
                 if (heroTextBlock) {
-                    const textOpacity = Math.max(0.001, 1 - (currentScrollY / (vh * 0.6))).toFixed(3);
-                    heroTextBlock.style.opacity = textOpacity;
+                    heroTextBlock.style.opacity = fadeProgress.toFixed(3);
                     
-                    if (textOpacity <= 0.01) {
+                    if (isHidden) {
                         if (heroTextBlock.style.visibility !== 'hidden') heroTextBlock.style.visibility = 'hidden';
                     } else {
                         if (heroTextBlock.style.visibility !== '') heroTextBlock.style.visibility = '';
                     }
                 }
+                
+                if (heroScrollHint) {
+                    heroScrollHint.style.opacity = (fadeProgress * 0.72).toFixed(3);
+                    
+                    if (isHidden) {
+                        if (heroScrollHint.style.visibility !== 'hidden') heroScrollHint.style.visibility = 'hidden';
+                    } else {
+                        if (heroScrollHint.style.visibility !== '') heroScrollHint.style.visibility = '';
+                    }
+                }
+
                 lastRenderedScrollY = currentScrollY;
             }
-            
-            // Only continue the loop if still scrolling
-            if (isScrolling) {
-                rafId = requestAnimationFrame(renderHeroParallax);
-            } else {
-                rafId = null;
-            }
+
+            rafId = null;
         };
 
-        // Only start the rAF loop when the user actually scrolls
+        // Render at most once per frame when the user scrolls.
         window.addEventListener('scroll', () => {
-            isScrolling = true;
             if (!rafId) {
                 rafId = requestAnimationFrame(renderHeroParallax);
             }
-            // Stop the loop shortly after scrolling stops
-            clearTimeout(window.scrollStopTimer);
-            window.scrollStopTimer = setTimeout(() => {
-                isScrolling = false;
-            }, 150);
         }, { passive: true });
+    }
+
+    // About page scroll hint uses the same fade timing as the homepage hero content.
+    const aboutScrollHint = document.querySelector('.about-scroll-hint');
+    if (aboutScrollHint) {
+        let aboutHintTicking = false;
+
+        const renderAboutScrollHint = () => {
+            const fadeProgress = Math.max(0.001, 1 - (window.scrollY / (vh * 0.6)));
+            const isHidden = fadeProgress <= 0.01;
+
+            if (aboutScrollHint.style.transition !== 'none') {
+                aboutScrollHint.style.transition = 'none';
+            }
+
+            aboutScrollHint.style.opacity = (fadeProgress * 0.72).toFixed(3);
+            aboutScrollHint.style.visibility = isHidden ? 'hidden' : '';
+            aboutScrollHint.style.pointerEvents = isHidden ? 'none' : '';
+            aboutHintTicking = false;
+        };
+
+        window.addEventListener('scroll', () => {
+            if (!aboutHintTicking) {
+                aboutHintTicking = true;
+                requestAnimationFrame(renderAboutScrollHint);
+            }
+        }, { passive: true });
+
+        renderAboutScrollHint();
     }
 
     // --- 3. BACK TO TOP LOGIC ---

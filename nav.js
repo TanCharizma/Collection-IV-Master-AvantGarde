@@ -174,22 +174,34 @@
         `;
         document.body.appendChild(cursor);
 
-        let cursorVisible = false;
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorX = mouseX;
         let cursorY = mouseY;
-        let isCursorClicked = false;
         let currentScale = 1;
+        let isCursorClicked = false;
+        let cursorVisible = false;
+        let cursorTransform = '';
 
-        window.addEventListener('mousemove', (e) => {
+        const paintCursor = () => {
+            const nextTransform = `translate3d(${cursorX.toFixed(2)}px, ${cursorY.toFixed(2)}px, 0) scale(${currentScale.toFixed(3)})`;
+            if (nextTransform !== cursorTransform) {
+                cursor.style.transform = nextTransform;
+                cursorTransform = nextTransform;
+            }
+        };
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorX = mouseX;
+            cursorY = mouseY;
             if (!cursorVisible) {
                 cursor.style.opacity = '1';
                 cursorVisible = true;
             }
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        }, { passive: true }); // Unblocks the scrolling thread from the mouse listener
+            paintCursor();
+        }, { passive: true });
 
         document.addEventListener('mousedown', (e) => {
             isCursorClicked = true;
@@ -200,56 +212,35 @@
             document.body.appendChild(radar);
             setTimeout(() => radar.remove(), 600); // Cleans up the DOM automatically
         });
+
         document.addEventListener('mouseup', () => isCursorClicked = false);
 
-        const renderCursor = () => {
-            const dx = mouseX - cursorX;
-            const dy = mouseY - cursorY;
-            const targetScale = isCursorClicked ? 0.7 : 1;
-            const ds = targetScale - currentScale;
-
-            // Only update the DOM if the cursor actually needs to move (Stops idle CPU/GPU drain!)
-            if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1 || Math.abs(ds) > 0.01) {
-                cursorX += dx * 0.6; 
-                cursorY += dy * 0.6; 
-                currentScale += ds * 0.4; 
-                // .toFixed() prevents sub-pixel float layout parsing which causes micro-stutters
-                cursor.style.transform = `translate3d(${cursorX.toFixed(2)}px, ${cursorY.toFixed(2)}px, 0) scale(${currentScale.toFixed(3)})`;
-            }
-
-            requestAnimationFrame(renderCursor);
-        };
-        requestAnimationFrame(renderCursor);
-
-        // Event delegation for hover states
+        // Hide custom cursor over interactive elements so native pointer shows
         document.addEventListener('mouseover', (e) => {
-            if (e.target.closest('a, button, .dropdown-trigger, .lang-switch span, .theme-toggle, .back-to-top, .modal-nav, img, .mobile-toggle')) {
+            if (e.target.closest('a, button, img, .dropdown-trigger, .lang-switch span, .theme-toggle, .mobile-toggle, .back-to-top, .modal-nav')) {
                 cursor.classList.add('hover');
-            }
-        });
-        
-        document.addEventListener('mouseout', (e) => {
-            // Only remove hover if we are actually leaving the interactive element entirely
-            if (!e.relatedTarget || !e.relatedTarget.closest('a, button, .dropdown-trigger, .lang-switch span, .theme-toggle, .back-to-top, .modal-nav, img, .mobile-toggle')) {
+            } else {
                 cursor.classList.remove('hover');
             }
         });
 
-        document.addEventListener('mouseleave', () => {
-            cursor.style.opacity = '0';
-            cursorVisible = false;
-        });
-        
-        document.addEventListener('mouseenter', () => {
-            cursor.style.opacity = '1';
-            cursorVisible = true;
-        });
+        const renderCursor = () => {
+            const targetScale = isCursorClicked ? 0.7 : 1;
+            const ds = targetScale - currentScale;
+
+            // Position is immediate; only click scale eases to avoid a delayed cursor feel.
+            if (Math.abs(ds) > 0.01) {
+                currentScale += ds * 0.65;
+                paintCursor();
+            }
+            requestAnimationFrame(renderCursor);
+        };
+        requestAnimationFrame(renderCursor);
     }
 
-    // Dynamic Layout-Aware Smooth Scroll & Hash Navigation Fix (Homepage Only)
+    // Offset-aware anchor navigation (Homepage Only)
     if (isHomePage) {
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Intercept standard on-page clicks
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 if (anchor.classList.contains('back-to-top')) return;
                 
@@ -261,50 +252,18 @@
                         e.preventDefault();
                         
                         const executeScroll = () => {
+                            // Calculate target destination once to avoid layout-thrashing drift.
+                            const targetY = Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - 64);
+
+                            window.scrollTo({
+                                top: targetY,
+                                behavior: 'smooth'
+                            });
+
                             history.replaceState(null, null, targetId);
-
-                            // Actively track and seamlessly correct the scroll destination if lazy images push the layout down
-                            let isUserScrolling = false;
-                            const stopCorrection = () => isUserScrolling = true;
-                            ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
-                                window.addEventListener(evt, stopCorrection, { once: true, passive: true });
-                            });
-
-                            let currentY = window.scrollY;
-                            let lastTime = performance.now();
-
-                            const scrollLoop = (time) => {
-                                if (isUserScrolling) return;
-
-                                const dt = time - lastTime;
-                                lastTime = time;
-
-                                // Continuously calculate the target destination in case lazy images expand above it
-                                const targetY = targetElement.getBoundingClientRect().top + window.scrollY - 64;
-                                const diff = targetY - currentY;
-
-                                if (Math.abs(diff) < 1) {
-                                    window.scrollTo(0, targetY);
-                                    return;
-                                }
-
-                                // Framerate-independent lerp (Linear Interpolation) for buttery smooth gliding
-                                // This natively absorbs layout shifts without glitching the native scrolling engine
-                                const lerpFactor = 1 - Math.exp(-0.003 * dt); // Optimized sweet spot for smooth but responsive gliding
-                                currentY += diff * lerpFactor;
-                                
-                                window.scrollTo(0, currentY);
-
-                                requestAnimationFrame(scrollLoop);
-                            };
-
-                            requestAnimationFrame((time) => {
-                                lastTime = time;
-                                scrollLoop(time);
-                            });
                         };
 
-                        if (navElement.classList.contains('nav-open')) {
+                        if (navElement && navElement.classList.contains('nav-open')) {
                             navElement.classList.remove('nav-open');
                             document.body.style.overflow = '';
                             // Delay scroll by 100ms to prevent iOS Safari compositor crash after body unlock reflow
@@ -316,46 +275,15 @@
                 });
             });
 
-            // 2. Fix cross-page navigation when arriving with a hash (e.g. index.html#motion)
+            // Align cross-page hash arrivals with the fixed header.
             if (window.location.hash) {
                 const targetElement = document.querySelector(window.location.hash);
                 
                 if (targetElement) {
-                    let isUserScrolling = false;
-                    
-                    // Stop correcting if the user manually tries to scroll
-                    const stopCorrection = () => isUserScrolling = true;
-                    ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
-                        window.addEventListener(evt, stopCorrection, { once: true, passive: true });
-                    });
-
-                    let trackingActive = true;
-                    
-                    const trackTarget = () => {
-                        if (isUserScrolling || !trackingActive) return;
-                        
-                        const rectTop = targetElement.getBoundingClientRect().top;
-                        
-                        // If layout shifts push the target away from the header, immediately correct it
-                        if (Math.abs(rectTop - 64) > 2) {
-                            window.scrollTo(0, rectTop + window.scrollY - 64);
-                        }
-                        
-                        if (trackingActive) {
-                            requestAnimationFrame(trackTarget);
-                        }
-                    };
-
-                    // Start stapling the viewport to the target immediately
-                    trackTarget();
-
-                    // Safely disconnect the tracker once the page fully resolves
-                    window.addEventListener('load', () => { 
-                        setTimeout(() => trackingActive = false, 500); // Allow brief buffer for final renders
-                    });
-                    
-                    // Failsafe disconnect after 3 seconds
-                    setTimeout(() => trackingActive = false, 3000);
+                    window.addEventListener('load', () => {
+                        const targetY = Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - 64);
+                        window.scrollTo({ top: targetY, behavior: 'auto' });
+                    }, { once: true });
                 }
             }
         });
@@ -383,7 +311,7 @@
                 e.preventDefault();
                 if (curtain) curtain.classList.add('curtain-cover');
                 
-                setTimeout(() => window.location.href = href, 400); // Wait for the fade-to-bg to complete
+                setTimeout(() => window.location.href = href, 200); // Faster cross-page transition
             });
         });
     });

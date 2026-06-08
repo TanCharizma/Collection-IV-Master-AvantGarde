@@ -71,7 +71,9 @@
     <script src="nav.js"></script>
     <header class="hero" id="hero">
         <!-- Change the background image URL right here for new clients -->
-        <div class="hero-bg" style="background-image: url('image/hero/hero.webp');"></div>
+        <div class="hero-bg-frame">
+            <div class="hero-bg" style="background-image: url('image/hero/hero.webp');"></div>
+        </div>
         <div class="hero-content">
             <div class="marquee-container reveal">
                 <div class="marquee-track">
@@ -100,6 +102,13 @@
                 </div>
             </div>
         </div>
+        <a href="#highlights" class="scroll-hint hero-scroll-hint reveal delay-3" aria-label="Scroll to highlights">
+            <span class="scroll-hint__text">
+                <span lang="en">Scroll</span>
+                <span lang="th">เลื่อน</span>
+            </span>
+            <span class="scroll-hint__line" aria-hidden="true"></span>
+        </a>
     </header>
 
     <!-- SECTION 2: Highlights (4 Images) -->

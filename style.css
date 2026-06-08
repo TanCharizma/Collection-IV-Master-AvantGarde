@@ -45,6 +45,7 @@ html {
     width: 100%;
     scrollbar-width: thin;
     scrollbar-color: var(--text) var(--bg);
+    scroll-behavior: smooth;
 }
 
 body {
@@ -312,7 +313,7 @@ body.lang-th .lang-switch .th::after {
     font-size: 10px;
     opacity: 0.5;
     display: inline-block;
-    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.08s ease-out;
 }
 
 .dropdown:hover .dropdown-trigger::after {
@@ -324,7 +325,7 @@ body.lang-th .lang-switch .th::after {
     position: absolute;
     top: 100%;
     left: 50%;
-    transform: translateX(-50%) translateY(8px); /* Tighter emergence */
+    transform: translateX(-50%) translateY(4px); /* Snappier emergence */
     background: var(--bg);
     backdrop-filter: none;
     min-width: 140px; /* Reduced width */
@@ -335,7 +336,7 @@ body.lang-th .lang-switch .th::after {
     box-shadow: none; /* Removed shadow */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.1s ease-out, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.1s;
+    transition: opacity 0.06s ease-out, transform 0.08s ease-out, visibility 0.06s;
     z-index: 101;
 }
 
@@ -363,7 +364,7 @@ body.lang-th .lang-switch .th::after {
     letter-spacing: 0.3em;
     color: var(--text) !important; /* Ensure readability on theme background */
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(0);
     transition: none; /* Brutalist snap */
 }
 
@@ -376,13 +377,6 @@ body.lang-th .lang-switch .th::after {
     opacity: 1;
     transform: translateY(0);
 }
-
-/* Subtle staggered entrance for the text */
-.dropdown:hover .dropdown-content a:nth-child(1) { transition-delay: 0.15s; }
-.dropdown:hover .dropdown-content a:nth-child(2) { transition-delay: 0.2s; }
-.dropdown:hover .dropdown-content a:nth-child(3) { transition-delay: 0.25s; }
-.dropdown:hover .dropdown-content a:nth-child(4) { transition-delay: 0.3s; }
-.dropdown:hover .dropdown-content a:nth-child(5) { transition-delay: 0.35s; }
 
 .dropdown-content a.active {
     color: var(--gold) !important;
@@ -428,34 +422,46 @@ body.lang-th .lang-switch .th::after {
     overflow: hidden; /* Necessary for the scale effect */
 }
 
+.hero-bg-frame,
 .hero-bg {
     position: absolute;
     inset: 0;
-    background-color: var(--bg); /* Seamlessly bridges the gap with the splash screen */
-    background-repeat: no-repeat;
-    background-position: center 10%;
-    background-size: cover;
-    z-index: 0;
-    transform-origin: center 20%;
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scale3d(1.1, 1.1, 1); /* Initial state */
-    transition: opacity 1.5s ease;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    will-change: transform, opacity; 
     pointer-events: none; /* Stops it from catching mouse events during animation */
 }
 
-.hero:not(.loaded) .hero-bg {
+.hero-bg-frame {
+    background-color: var(--bg); /* Seamlessly bridges the gap with the splash screen */
+    z-index: 0;
+    opacity: 0;
+    transform-origin: center 20%;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1); /* Stable before the hero is revealed */
+    transition: opacity 1.2s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
 }
 
-.hero.loaded .hero-bg {
+.hero-bg {
+    background-repeat: no-repeat;
+    background-position: center 10%;
+    background-size: cover;
+    transform-origin: center 20%;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+.hero:not(.loaded) .hero-bg-frame {
+}
+
+.hero.loaded .hero-bg-frame {
     opacity: 1;
-    animation: heroEntranceZoom 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Faster, smoother pure CSS zoom-in */
+    animation: heroEntranceZoom 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Entrance owns only the wrapper transform */
 }
 
 @keyframes heroEntranceZoom {
-    0% { transform: translate3d(0, 0, 0) scale3d(1.1, 1.1, 1); }
+    0% { transform: translate3d(0, 0, 0) scale3d(1.04, 1.04, 1); }
     100% { transform: translate3d(0, 0, 0) scale3d(1, 1, 1); }
 }
 
@@ -527,11 +533,12 @@ body.lang-th .lang-switch .th::after {
     white-space: nowrap;
     user-select: none;
     pointer-events: none; /* Stops expensive hit-testing on the massive moving letters */
+    contain: layout paint;
 }
 
 .marquee-track {
     display: flex;
-    animation: marquee 20s linear infinite;
+    animation: marquee 28s linear infinite;
     will-change: transform; 
     transform: translateZ(0); /* Restores GPU hardware acceleration for the massive text block */
 }
@@ -542,14 +549,14 @@ body.lang-th .lang-switch .th::after {
 }
 
 .marquee-track h1 {
-    font-size: clamp(100px, 16vw, 240px); /* Massive scaling */
+    font-size: clamp(72px, 11vw, 160px); /* Large editorial scale without overloading the compositor */
     font-weight: 200; /* Architectural thin lines */
     line-height: 1;
     margin: 0;
     padding-right: 64px;
     flex-shrink: 0;
     color: transparent; /* Hollow wireframe effect everywhere */
-    -webkit-text-stroke: 2px var(--white); /* Thin outline */
+    -webkit-text-stroke: 1px var(--white); /* Lighter outline paints more smoothly */
 }
 
 .marquee-track h1::after {
@@ -561,7 +568,8 @@ body.lang-th .lang-switch .th::after {
 
 /* Ensures tagline maintains its editorial softness after reveal */
 .hero-tagline.reveal.active {
-    opacity: 0.7;
+    color: var(--gold);
+    opacity: 1;
 }
 
 .hero-tagline.reveal.active::before {
@@ -572,6 +580,79 @@ body.lang-th .lang-switch .th::after {
     margin-top: 32px;
     display: flex;
     gap: 32px; /* Increased to accommodate harsh shadows */
+}
+
+/* --- SCROLL HINT --- */
+.scroll-hint {
+    font-family: var(--sans);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.32em;
+    line-height: 1;
+    text-transform: uppercase;
+    opacity: 0.72;
+    transition: color 0.15s ease-out;
+}
+
+.scroll-hint.reveal.active {
+    opacity: 0.72;
+}
+
+.scroll-hint__text {
+    display: inline-flex;
+}
+
+.scroll-hint__line {
+    position: relative;
+    display: inline-block;
+    width: 1px;
+    height: 52px;
+    overflow: hidden;
+    background: currentColor;
+    opacity: 0.58;
+}
+
+.scroll-hint__line::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: var(--gold);
+    animation: scrollHintTrace 1.7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.hero-scroll-hint {
+    position: absolute;
+    right: var(--margin);
+    bottom: 42px;
+    z-index: 2;
+    color: var(--white);
+    transform: none;
+    transition: color 0.15s ease-out;
+}
+
+.hero-scroll-hint.reveal,
+.hero-scroll-hint.reveal.active {
+    transform: none;
+}
+
+.about-scroll-hint {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: -16px;
+    margin-bottom: 64px;
+}
+
+@keyframes scrollHintTrace {
+    0% { transform: translate3d(0, 0, 0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate3d(0, 350%, 0); opacity: 0; }
 }
 
 .btn-primary, .btn-secondary, .btn-bold, .lang-switch span {
@@ -623,6 +704,11 @@ body.lang-th .lang-switch .th::after {
         border-bottom-color: transparent;
         transform: translateY(-2px);
         color: var(--gold);
+    }
+
+    .scroll-hint:hover {
+        color: var(--gold);
+        opacity: 1;
     }
 }
 
@@ -756,6 +842,8 @@ section {
 .full-grid img { 
     width: 100%; 
     height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
     display: block;
     background-color: var(--surface);
     position: relative;
@@ -867,7 +955,7 @@ section {
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
 }
 .app-transition-curtain.start-covered {
     opacity: 1 !important;
@@ -888,7 +976,8 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s;
+    will-change: opacity;
 }
 .splash-screen.hidden {
     opacity: 0;
@@ -902,7 +991,7 @@ section {
     letter-spacing: -0.05em;
     color: var(--text);
     opacity: 0;
-    animation: splashFadeInOut 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: splashFadeInOut 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes splashFadeInOut {
     0% { opacity: 0; transform: scale(0.95); }
@@ -1399,6 +1488,7 @@ footer {
     .split-layout { flex-direction: column; gap: 48px; }
     .split-layout img { width: 100%; transform: none; box-shadow: 8px 8px 0px var(--text); }
     .split-layout .bio { width: 100%; margin-left: 0; margin-top: 0; padding: 24px; transform: rotate(1deg); box-shadow: 8px 8px 0px var(--gold); }
+    .about-scroll-hint { justify-content: flex-start; }
     
     /* Editorial Box Overrides */
     [style*="padding: 100px"] { padding: 64px 24px !important; }
@@ -1423,6 +1513,9 @@ footer {
     
     .hero-btns { flex-direction: column; gap: 16px; }
     .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.2em; }
+    .hero-scroll-hint { right: 24px; bottom: 24px; }
+    .scroll-hint { gap: 10px; font-size: 9px; letter-spacing: 0.26em; }
+    .scroll-hint__line { height: 38px; }
 
     section { padding: 48px 0; } /* Tighter vertical rhythm */
     .section-label { font-size: 24px; padding-bottom: 16px; padding-left: 0; margin-bottom: 24px; margin-left: 0; }
@@ -1474,11 +1567,27 @@ footer {
     .footer-ticker { padding: 12px 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .scroll-hint__line::after {
+        animation: none;
+        opacity: 0;
+    }
+}
+
 /* --- 7. CUSTOM CURSOR --- */
 @media (hover: hover) {
-    /* Hide default cursor universally to prevent native pointers from showing */
+    /* Hide default cursor globally */
     html, body {
         cursor: none;
+    }
+
+    /* Keep cursor handling native for the snappiest possible hover feedback. */
+    a, a *, button, button *, .dropdown-trigger, .dropdown-trigger *, .lang-switch span, .lang-switch span *, .theme-toggle, .theme-toggle *, .back-to-top, .back-to-top *, .modal-nav, img, .mobile-toggle, .mobile-toggle * {
+        cursor: pointer !important;
     }
 
     .cursor-dot {
@@ -1486,29 +1595,23 @@ footer {
         top: 0;
         left: 0;
         pointer-events: none;
-        z-index: 9998; /* Punches through UI/modals but stays gracefully behind splash and curtains */
-        transition: opacity 0.3s ease;
+        z-index: 9998;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
         will-change: transform;
     }
 
     .cursor-dot svg {
-        width: 20px; /* Reduced for a standard desktop feel */
+        width: 20px;
         height: auto;
-        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         position: absolute;
         top: 0;
         left: 0;
     }
 
-    /* Hides the custom arrow instantly so the native OS link pointer can take over */
     .cursor-dot.hover {
         opacity: 0 !important;
         transition: none !important;
-    }
-
-    /* Reveal the native OS pointer for interactive elements and images */
-    a, a *, button, button *, .dropdown-trigger, .dropdown-trigger *, .lang-switch span, .lang-switch span *, .theme-toggle, .theme-toggle *, .back-to-top, .back-to-top *, .modal-nav, img, .mobile-toggle, .mobile-toggle * {
-        cursor: pointer !important;
     }
 
     .cursor-radar {
