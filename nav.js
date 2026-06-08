@@ -98,11 +98,22 @@
 
     // Mobile Menu Logic
     const mobileToggle = navElement.querySelector('#mobileToggle');
+    const navLinks = navElement.querySelector('.nav-links');
     if (mobileToggle) {
         mobileToggle.addEventListener('click', () => {
             navElement.classList.toggle('nav-open');
             document.body.style.overflow = navElement.classList.contains('nav-open') ? 'hidden' : '';
         });
+
+        if (navLinks) {
+            navLinks.addEventListener('click', (e) => {
+                if (!navElement.classList.contains('nav-open')) return;
+                if (e.target.closest('a, .lang-switch, .theme-toggle')) return;
+
+                navElement.classList.remove('nav-open');
+                document.body.style.overflow = '';
+            });
+        }
 
         // Close menu when a link is clicked
         navElement.querySelectorAll('.nav-links a').forEach(link => {
@@ -244,15 +255,16 @@
             const getHeaderOffset = () => {
                 return Math.ceil((navElement && navElement.getBoundingClientRect().height) || 64);
             };
-            const getTargetY = (targetElement) => {
+            const getTargetY = (targetElement, isFromMobileMenu = false) => {
                 const visualTarget = targetElement.querySelector('.section-label') || targetElement;
                 const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
-                const anchorBreathingRoom = visualTarget === targetElement ? 0 : 8;
+                const needsMobileMenuRoom = isFromMobileMenu && window.innerWidth <= 768;
+                const anchorBreathingRoom = visualTarget === targetElement ? 0 : (needsMobileMenuRoom ? 32 : 8);
 
                 return Math.max(0, targetTop - getHeaderOffset() - anchorBreathingRoom);
             };
-            const correctAnchorLanding = (targetElement) => {
-                const correctedY = getTargetY(targetElement);
+            const correctAnchorLanding = (targetElement, isFromMobileMenu = false) => {
+                const correctedY = getTargetY(targetElement, isFromMobileMenu);
                 if (Math.abs(window.scrollY - correctedY) > 2) {
                     window.scrollTo({
                         top: correctedY,
@@ -270,18 +282,19 @@
                     
                     if (targetElement) {
                         e.preventDefault();
+                        const isFromMobileMenu = !!(navElement && navElement.classList.contains('nav-open'));
                         
                         const executeScroll = () => {
                             // Calculate target destination once to avoid layout-thrashing drift.
-                            const targetY = getTargetY(targetElement);
+                            const targetY = getTargetY(targetElement, isFromMobileMenu);
 
                             window.scrollTo({
                                 top: targetY,
                                 behavior: 'smooth'
                             });
 
-                            window.setTimeout(() => correctAnchorLanding(targetElement), 450);
-                            window.setTimeout(() => correctAnchorLanding(targetElement), 900);
+                            window.setTimeout(() => correctAnchorLanding(targetElement, isFromMobileMenu), 450);
+                            window.setTimeout(() => correctAnchorLanding(targetElement, isFromMobileMenu), 900);
                             history.replaceState(null, null, targetId);
                         };
 
