@@ -205,7 +205,7 @@
 
             stableFrames = 0;
             const speed = isMobileScroll
-                ? (elapsed < 240 ? 0.024 : 0.016)
+                ? (elapsed < 220 ? 0.011 : 0.0068) * Math.min(1, Math.max(0.68, distance / 900))
                 : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
             const lerpFactor = 1 - Math.exp(-speed * dt);
             window.scrollTo(0, currentY + diff * lerpFactor);
