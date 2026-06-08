@@ -104,7 +104,7 @@
         const visualTarget = targetElement.querySelector('.section-label') || targetElement;
         const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
 
-        return Math.max(0, targetTop - getHeaderOffset() - 12);
+        return Math.max(0, targetTop - getHeaderOffset() - 4);
     };
     let activeAnchorScroll = 0;
     const scrollToAnchorTarget = (targetId) => {
@@ -124,13 +124,11 @@
         }
 
         const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-        const duration = Math.min(1100, Math.max(560, distance * 0.28));
+        const duration = Math.min(1350, Math.max(680, 520 + (distance * 0.18)));
         const startTime = performance.now();
         document.documentElement.style.scrollBehavior = 'auto';
 
-        const easeInOutCubic = (t) => {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        };
+        const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
 
         const animate = (now) => {
             if (scrollToken !== activeAnchorScroll) {
@@ -139,7 +137,7 @@
             }
 
             const progress = Math.min((now - startTime) / duration, 1);
-            const eased = easeInOutCubic(progress);
+            const eased = easeInOutSine(progress);
             const nextY = startY + ((targetY - startY) * eased);
             window.scrollTo(0, nextY);
 
