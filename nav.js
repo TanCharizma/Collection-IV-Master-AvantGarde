@@ -241,9 +241,15 @@
     // Offset-aware anchor navigation (Homepage Only)
     if (isHomePage) {
         document.addEventListener('DOMContentLoaded', () => {
-            const headerOffset = 64;
+            const getHeaderOffset = () => {
+                return Math.ceil((navElement && navElement.getBoundingClientRect().height) || 64);
+            };
             const getTargetY = (targetElement) => {
-                return Math.max(0, targetElement.getBoundingClientRect().top + window.scrollY - headerOffset);
+                const visualTarget = targetElement.querySelector('.section-label') || targetElement;
+                const targetTop = visualTarget.getBoundingClientRect().top + window.scrollY;
+                const anchorBreathingRoom = visualTarget === targetElement ? 0 : 8;
+
+                return Math.max(0, targetTop - getHeaderOffset() - anchorBreathingRoom);
             };
             const correctAnchorLanding = (targetElement) => {
                 const correctedY = getTargetY(targetElement);
