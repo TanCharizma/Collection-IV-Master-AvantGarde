@@ -106,29 +106,21 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
-    const waitForAnchorLayout = (targetElement) => {
-        return new Promise((resolve) => {
-            let lastY = getAnchorTargetY(targetElement);
-            let stableFrames = 0;
-            let frames = 0;
-            const maxFrames = 30;
+    const waitForPortfolioImages = () => {
+        const portfolioImages = Array.from(document.querySelectorAll('#portfolio .full-grid img'));
+        if (portfolioImages.length === 0) return Promise.resolve();
 
-            const check = () => {
-                const nextY = getAnchorTargetY(targetElement);
-                stableFrames = Math.abs(nextY - lastY) < 1 ? stableFrames + 1 : 0;
-                lastY = nextY;
-                frames += 1;
+        const imagePromises = portfolioImages.map(img => {
+            if (img.complete) return Promise.resolve();
 
-                if (stableFrames >= 5 || frames >= maxFrames) {
-                    resolve();
-                    return;
-                }
-
-                requestAnimationFrame(check);
-            };
-
-            requestAnimationFrame(check);
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
         });
+
+        const timeout = new Promise(resolve => window.setTimeout(resolve, 1200));
+        return Promise.race([Promise.all(imagePromises), timeout]);
     };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
@@ -157,63 +149,19 @@
             window.setTimeout(finish, 460);
         });
     };
-    let activeAnchorScroll = 0;
     const scrollToAnchorTarget = (targetId) => {
         const targetElement = document.querySelector(targetId);
         if (!targetElement) return;
 
-        const scrollToken = ++activeAnchorScroll;
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const startY = window.scrollY;
-        const targetY = getAnchorTargetY(targetElement);
-        const distance = Math.abs(targetY - startY);
-
-        if (prefersReducedMotion || distance < 8) {
-            window.scrollTo({ top: targetY, behavior: 'auto' });
-            history.replaceState(null, null, targetId);
-            return;
-        }
-
-        const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-        const previousBodyScrollBehavior = document.body.style.scrollBehavior;
-        const previousOverflowAnchor = document.documentElement.style.overflowAnchor;
-        const previousBodyOverflowAnchor = document.body.style.overflowAnchor;
-        const duration = Math.min(1450, Math.max(760, 620 + (distance * 0.16)));
-        const startTime = performance.now();
-        document.documentElement.style.scrollBehavior = 'auto';
-        document.body.style.scrollBehavior = 'auto';
-        document.documentElement.style.overflowAnchor = 'none';
-        document.body.style.overflowAnchor = 'none';
-
-        const easeInOutSine = (t) => -((Math.cos(Math.PI * t) - 1) / 2);
-
-        const animate = (now) => {
-            if (scrollToken !== activeAnchorScroll) {
-                document.documentElement.style.scrollBehavior = previousScrollBehavior;
-                document.body.style.scrollBehavior = previousBodyScrollBehavior;
-                document.documentElement.style.overflowAnchor = previousOverflowAnchor;
-                document.body.style.overflowAnchor = previousBodyOverflowAnchor;
-                return;
-            }
-
-            const progress = Math.min((now - startTime) / duration, 1);
-            const eased = easeInOutSine(progress);
-            const nextY = startY + ((targetY - startY) * eased);
-            window.scrollTo({ top: nextY, behavior: 'auto' });
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-                return;
-            }
-
-            document.documentElement.style.scrollBehavior = previousScrollBehavior;
-            document.body.style.scrollBehavior = previousBodyScrollBehavior;
-            document.documentElement.style.overflowAnchor = previousOverflowAnchor;
-            document.body.style.overflowAnchor = previousBodyOverflowAnchor;
-        };
-
-        requestAnimationFrame(animate);
-        history.replaceState(null, null, targetId);
+        waitForPortfolioImages().then(() => {
+            requestAnimationFrame(() => {
+                window.scrollTo({
+                    top: getAnchorTargetY(targetElement),
+                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+                });
+                history.replaceState(null, null, targetId);
+            });
+        });
     };
 
     if (mobileToggle) {
@@ -244,10 +192,6 @@
                         const targetId = href.substring(href.indexOf('#'));
 
                         closeMenuForAnchorScroll()
-                            .then(() => {
-                                const targetElement = document.querySelector(targetId);
-                                return targetElement ? waitForAnchorLayout(targetElement) : Promise.resolve();
-                            })
                             .then(() => scrollToAnchorTarget(targetId));
                     } else {
                         navElement.classList.remove('nav-open');
