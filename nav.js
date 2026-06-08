@@ -144,7 +144,7 @@
                 return;
             }
 
-            const lerpFactor = 1 - Math.exp(-0.008 * dt);
+            const lerpFactor = 1 - Math.exp(-0.014 * dt);
             currentY += diff * lerpFactor;
             window.scrollTo(0, currentY);
             requestAnimationFrame(scrollLoop);
