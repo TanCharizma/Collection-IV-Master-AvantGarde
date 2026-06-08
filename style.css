@@ -878,7 +878,7 @@ section {
 .full-grid img { 
     width: 100%; 
     height: auto;
-    aspect-ratio: var(--portfolio-aspect, auto);
+    aspect-ratio: var(--portfolio-aspect, 2 / 3);
     object-fit: cover;
     display: block;
     background-color: var(--surface);

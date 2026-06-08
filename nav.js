@@ -106,22 +106,6 @@
 
         return Math.max(0, targetTop - getHeaderOffset() - 10);
     };
-    const waitForPortfolioImages = () => {
-        const portfolioImages = Array.from(document.querySelectorAll('#portfolio .full-grid img'));
-        if (portfolioImages.length === 0) return Promise.resolve();
-
-        const imagePromises = portfolioImages.map(img => {
-            if (img.complete) return Promise.resolve();
-
-            return new Promise(resolve => {
-                img.addEventListener('load', resolve, { once: true });
-                img.addEventListener('error', resolve, { once: true });
-            });
-        });
-
-        const timeout = new Promise(resolve => window.setTimeout(resolve, 1200));
-        return Promise.race([Promise.all(imagePromises), timeout]);
-    };
     const closeMenuForAnchorScroll = () => {
         if (!navLinks) {
             navElement.classList.remove('nav-open');
@@ -149,16 +133,24 @@
             window.setTimeout(finish, 460);
         });
     };
-    const scrollToAnchorTarget = (targetId) => {
-        const targetElement = document.querySelector(targetId);
-        if (!targetElement) return;
+    function scrollToAnchor(targetId) {
+        const target = document.querySelector(targetId);
+        if (!target) return;
 
-        waitForPortfolioImages().then(() => {
+        const images = document.querySelectorAll('.full-grid img');
+        const imagePromises = Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
+        });
+
+        Promise.all(imagePromises).then(() => {
             requestAnimationFrame(() => {
-                window.scrollTo({
-                    top: getAnchorTargetY(targetElement),
-                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-                });
+                const navHeight = getHeaderOffset();
+                const offset = target.getBoundingClientRect().top + window.scrollY - navHeight;
+                window.scrollTo({ top: offset, behavior: 'smooth' });
                 history.replaceState(null, null, targetId);
             });
         });
@@ -192,7 +184,7 @@
                         const targetId = href.substring(href.indexOf('#'));
 
                         closeMenuForAnchorScroll()
-                            .then(() => scrollToAnchorTarget(targetId));
+                            .then(() => scrollToAnchor(targetId));
                     } else {
                         navElement.classList.remove('nav-open');
                         document.body.style.overflow = '';
