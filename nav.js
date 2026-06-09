@@ -193,13 +193,13 @@
                 return;
             }
 
-            const dt = Math.min(32, time - lastTime || 16);
+            const isMobileScroll = window.innerWidth <= 768;
+            const dt = Math.min(isMobileScroll ? 24 : 32, time - lastTime || 16);
             lastTime = time;
             const currentY = window.scrollY;
             const targetY = getAnchorTargetY(target);
             const diff = targetY - currentY;
             const elapsed = time - startTime;
-            const isMobileScroll = window.innerWidth <= 768;
             const distance = Math.abs(diff);
             const stopThreshold = isMobileScroll ? 1.25 : 0.6;
 
@@ -218,7 +218,7 @@
 
             stableFrames = 0;
             const speed = isMobileScroll
-                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.72, distance / 1000))
+                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.78, distance / 1000))
                 : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
             const lerpFactor = 1 - Math.exp(-speed * dt);
             window.scrollTo(0, currentY + diff * lerpFactor);
