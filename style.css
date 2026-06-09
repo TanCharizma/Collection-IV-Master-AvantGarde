@@ -1566,7 +1566,7 @@ section {
     }
 
     .comp-card-modal-note {
-        bottom: calc(var(--mobile-viewport-overbleed) + max(40px, env(safe-area-inset-bottom))) !important;
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(24px, env(safe-area-inset-bottom))) !important;
     }
 
     #compCardImg {
