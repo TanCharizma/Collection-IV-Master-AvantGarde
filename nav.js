@@ -137,6 +137,19 @@
         navElement.classList.remove('nav-open');
         document.body.style.overflow = '';
     };
+    const runAfterViewportSettles = (callback, delay = 0) => {
+        const run = () => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(callback);
+            });
+        };
+
+        if (delay > 0) {
+            setTimeout(run, delay);
+        } else {
+            run();
+        }
+    };
     let activeAnchorScroll = 0;
     function scrollToAnchor(targetId, behavior = 'smooth') {
         if (!targetId || targetId === '#') return;
@@ -205,7 +218,7 @@
 
             stableFrames = 0;
             const speed = isMobileScroll
-                ? (elapsed < 220 ? 0.0098 : 0.006) * Math.min(1, Math.max(0.66, distance / 900))
+                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.58, distance / 1000))
                 : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
             const lerpFactor = 1 - Math.exp(-speed * dt);
             window.scrollTo(0, currentY + diff * lerpFactor);
@@ -245,9 +258,9 @@
 
                     if (navElement.classList.contains('nav-open')) {
                         closeMobileMenu();
-                        setTimeout(() => scrollToAnchor(targetId), 100);
+                        runAfterViewportSettles(() => scrollToAnchor(targetId), 140);
                     } else {
-                        scrollToAnchor(targetId);
+                        runAfterViewportSettles(() => scrollToAnchor(targetId));
                     }
                 } else if (navElement.classList.contains('nav-open')) {
                     closeMobileMenu();
