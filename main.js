@@ -480,6 +480,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const attachSwipeDownToClose = ({
+        modalElement,
+        dragElement,
+        closeModal,
+        ignoreElement,
+        allowHorizontalSwipe = false,
+        onHorizontalSwipe
+    }) => {
+        if (!modalElement || !dragElement) return;
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let activeGesture = null;
+        let isDragging = false;
+        const closeThreshold = 95;
+        const horizontalThreshold = 50;
+
+        modalElement.addEventListener('touchstart', e => {
+            if (e.touches.length > 1) return;
+            if (ignoreElement && e.target.closest && e.target.closest(ignoreElement)) return;
+
+            touchStartX = e.touches[0].screenX;
+            touchStartY = e.touches[0].screenY;
+            activeGesture = null;
+            isDragging = true;
+            dragElement.style.transition = 'none';
+        }, { passive: true });
+
+        modalElement.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (!isDragging || e.touches.length > 1) return;
+
+            const deltaX = e.touches[0].screenX - touchStartX;
+            const deltaY = e.touches[0].screenY - touchStartY;
+
+            if (!activeGesture) {
+                if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
+                activeGesture = Math.abs(deltaY) > Math.abs(deltaX) * 1.2 ? 'vertical' : 'horizontal';
+            }
+
+            if (activeGesture === 'vertical') {
+                const dragY = Math.max(0, deltaY);
+                const scale = Math.max(0.94, 1 - dragY / 1800);
+                dragElement.style.transform = `translate(-50%, calc(-50% + ${dragY * 0.72}px)) scale(${scale})`;
+                dragElement.style.opacity = `${Math.max(0.35, 1 - dragY / 260)}`;
+                return;
+            }
+
+            if (allowHorizontalSwipe) {
+                dragElement.style.transform = `translate(calc(-50% + ${deltaX * 0.6}px), -50%)`;
+                dragElement.style.opacity = `${Math.max(0.3, 1 - Math.abs(deltaX) / window.innerWidth)}`;
+            }
+        }, { passive: false });
+
+        modalElement.addEventListener('touchend', e => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const touch = e.changedTouches[0];
+            const deltaX = touch.screenX - touchStartX;
+            const deltaY = touch.screenY - touchStartY;
+            const wasVertical = activeGesture === 'vertical';
+            activeGesture = null;
+
+            if (wasVertical && deltaY > closeThreshold && Math.abs(deltaY) > Math.abs(deltaX)) {
+                dragElement.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+                dragElement.style.transform = 'translate(-50%, 35%) scale(0.96)';
+                dragElement.style.opacity = '0';
+                setTimeout(closeModal, 160);
+                return;
+            }
+
+            if (!wasVertical && allowHorizontalSwipe && typeof onHorizontalSwipe === 'function') {
+                if (Math.abs(deltaX) > horizontalThreshold) {
+                    onHorizontalSwipe(deltaX);
+                    return;
+                }
+            }
+
+            dragElement.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
+            dragElement.style.transform = 'translate(-50%, -50%)';
+            dragElement.style.opacity = '1';
+        }, { passive: true });
+    };
+
     // --- 4. IMAGE MODAL LOGIC (With Keyboard Support) ---
     const modal = document.getElementById("imageModal");
     if (modal) {
@@ -730,48 +815,24 @@ document.addEventListener('DOMContentLoaded', () => {
             syncFullscreenToggle();
         });
         
-        // Mobile Touch Swipe Navigation
-        let touchStartX = 0;
-        let touchCurrentX = 0;
-        let isSwiping = false;
-
-        modal.addEventListener('touchstart', e => {
-            if (e.touches.length > 1) return; // Ignore multi-touch
-            touchStartX = e.changedTouches[0].screenX;
-            isSwiping = true;
-            modalImg.style.transition = 'none'; // Lock to finger
-        }, { passive: true });
-
-        // Lock background scroll on mobile completely when touching the modal
-        modal.addEventListener('touchmove', e => {
-            e.preventDefault();
-            if (!isSwiping) return;
-            touchCurrentX = e.changedTouches[0].screenX;
-            const deltaX = touchCurrentX - touchStartX;
-            
-            // Elastic drag tracking
-            modalImg.style.transform = `translate(calc(-50% + ${deltaX * 0.6}px), -50%)`;
-            modalImg.style.opacity = Math.max(0.3, 1 - Math.abs(deltaX) / window.innerWidth);
-        }, { passive: false });
-
-        modal.addEventListener('touchend', e => {
-            if (!isSwiping) return;
-            isSwiping = false;
-            const touchEndX = e.changedTouches[0].screenX;
-            const deltaX = touchEndX - touchStartX;
-            const swipeThreshold = 50; // Required distance
-
-            if (deltaX < -swipeThreshold && currentImgIndex < currentSectionImages.length - 1) {
-                updateModal(currentImgIndex + 1, 1); // Swipe left -> Next
-            } else if (deltaX > swipeThreshold && currentImgIndex > 0) {
-                updateModal(currentImgIndex - 1, -1); // Swipe right -> Prev
-            } else {
-                // Snap back to center if they didn't drag far enough
-                modalImg.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
-                modalImg.style.transform = `translate(-50%, -50%)`;
-                modalImg.style.opacity = '1';
+        attachSwipeDownToClose({
+            modalElement: modal,
+            dragElement: modalImg,
+            closeModal,
+            ignoreElement: '.modal-caption, .modal-caption-toggle, .modal-fullscreen-toggle, .modal-nav',
+            allowHorizontalSwipe: true,
+            onHorizontalSwipe: (deltaX) => {
+                if (deltaX < 0 && currentImgIndex < currentSectionImages.length - 1) {
+                    updateModal(currentImgIndex + 1, 1);
+                } else if (deltaX > 0 && currentImgIndex > 0) {
+                    updateModal(currentImgIndex - 1, -1);
+                } else {
+                    modalImg.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
+                    modalImg.style.transform = 'translate(-50%, -50%)';
+                    modalImg.style.opacity = '1';
+                }
             }
-        }, { passive: true });
+        });
         
         // Global Escape Key for Comp Card Modal
         document.addEventListener('keydown', (e) => {
@@ -779,6 +840,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Escape' && compModal && compModal.classList.contains('show-modal')) {
                 compModal.classList.remove('show-modal');
                 unlockScroll();
+                const compImg = document.getElementById('compCardImg');
+                if (compImg) {
+                    compImg.style.transition = 'none';
+                    compImg.style.transform = 'translate(-50%, -50%)';
+                    compImg.style.opacity = '1';
+                }
             }
         });
     }
@@ -817,11 +884,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const compCardImg = document.getElementById('compCardImg');
         const compCardDownload = document.getElementById('compCardDownload');
 
-        if (compCardContainer && compCardBtn && compCardModal) {
-            // Lock background scroll for Comp Card Modal as well
-            compCardModal.addEventListener('touchmove', e => {
-                e.preventDefault();
-            }, { passive: false });
+        if (compCardContainer && compCardBtn && compCardModal && compCardImg) {
+            const closeCompCardModal = () => {
+                compCardModal.classList.remove('show-modal');
+                unlockScroll();
+                setTimeout(() => {
+                    if (!compCardModal.classList.contains('show-modal')) {
+                        compCardImg.style.transition = 'none';
+                        compCardImg.style.transform = 'translate(-50%, -50%)';
+                        compCardImg.style.opacity = '1';
+                    }
+                }, 250);
+            };
+
+            attachSwipeDownToClose({
+                modalElement: compCardModal,
+                dragElement: compCardImg,
+                closeModal: closeCompCardModal,
+                ignoreElement: '#compCardDownload'
+            });
 
             if (window.CLIENT_CONFIG.compCardUrl && window.CLIENT_CONFIG.compCardUrl.trim() !== "") {
                 compCardBtn.addEventListener('click', (e) => {
@@ -853,8 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 compCardModal.onclick = (e) => {
                     // Close if clicking the background, but don't close if clicking the image or download button
                     if (e.target !== compCardImg && !compCardDownload.contains(e.target)) {
-                        compCardModal.classList.remove('show-modal');
-                        unlockScroll();
+                        closeCompCardModal();
                     }
                 };
             } else {
