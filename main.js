@@ -379,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
             backToTop.style.opacity = '0';
             backToTop.style.pointerEvents = 'none';
             backToTop.classList.remove('visible');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             clearInterval(scrollCheckInterval);
             clearTimeout(scrollTimeout);
 
@@ -390,18 +389,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 evaluateBackToTop(window.scrollY);
             };
 
-            scrollCheckInterval = setInterval(() => {
-                if (window.scrollY <= 0) {
-                    clearInterval(scrollCheckInterval);
-                    clearTimeout(scrollTimeout);
-                    unlockButton();
-                }
-            }, 100);
+            if (window.AvantGardeScrollToAnchor) {
+                window.AvantGardeScrollToAnchor('#hero');
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
 
             scrollTimeout = setTimeout(() => {
                 clearInterval(scrollCheckInterval);
                 unlockButton();
-            }, 2000);
+            }, window.innerWidth <= 768 ? 1600 : 1100);
         });
 
         const interruptScroll = () => {
@@ -922,6 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault();
                     compCardImg.src = window.CLIENT_CONFIG.compCardUrl;
                     compCardDownload.href = window.CLIENT_CONFIG.compCardDownloadUrl || window.CLIENT_CONFIG.compCardUrl;
+                    compCardDownload.download = `${(window.CLIENT_CONFIG.name || 'client').trim().replace(/\s+/g, '-')}-comp-card.png`;
                     
                     // Prep image state BEFORE making modal visible
                     compCardImg.style.transition = 'none';
