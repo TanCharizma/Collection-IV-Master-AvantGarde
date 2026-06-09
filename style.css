@@ -27,6 +27,7 @@
     --dropdown-bg: #EAEAEA;
     --alt-bg: #DFDFDF;
     --border-subtle: #000000; /* HARSH 1px solid black wireframes */
+    --mobile-viewport-overbleed: 0px;
     color-scheme: light;
 }
 
@@ -82,6 +83,18 @@ body::before {
     left: 0;
     right: 0;
     height: env(safe-area-inset-top);
+    background: var(--bg);
+    z-index: 1500;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: env(safe-area-inset-bottom);
     background: var(--bg);
     z-index: 99;
     pointer-events: none;
@@ -211,6 +224,17 @@ nav {
     backdrop-filter: none;
     border-bottom: 1px solid var(--text); /* Clean structural line */
     transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav::before {
+    content: "";
+    position: fixed;
+    top: calc(-1 * env(safe-area-inset-top));
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--bg);
+    pointer-events: none;
 }
 
 /* --- NAVIGATION ENTRANCE ANIMATION --- */
@@ -1017,7 +1041,9 @@ section {
 /* --- NATIVE APP TRANSITIONS --- */
 .app-transition-curtain {
     position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
+    inset: 0;
+    width: auto;
+    min-height: 100vh;
     background-color: var(--bg);
     z-index: 9999;
     pointer-events: none;
@@ -1038,7 +1064,9 @@ section {
 /* --- BRUTALIST SPLASH SCREEN --- */
 .splash-screen {
     position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
+    inset: 0;
+    width: auto;
+    min-height: 100vh;
     background-color: var(--bg);
     z-index: 10000;
     display: flex;
@@ -1049,6 +1077,13 @@ section {
 .splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
+}
+
+@supports (height: 100dvh) {
+    .app-transition-curtain,
+    .splash-screen {
+        min-height: 100dvh;
+    }
 }
 .splash-stack {
     display: flex;
@@ -1439,10 +1474,35 @@ section {
 }
 
 @media (max-width: 768px) {
+    .modal {
+        top: calc(-1 * var(--mobile-viewport-overbleed));
+        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        height: auto;
+        min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+    }
+
+    .modal-content {
+        max-height: calc(100svh - 32px);
+    }
+
+    .modal.is-immersive .modal-content {
+        height: 100svh;
+        max-height: 100svh;
+    }
+
+    .comp-card-modal-note {
+        bottom: calc(var(--mobile-viewport-overbleed) + max(40px, env(safe-area-inset-bottom))) !important;
+    }
+
+    #compCardImg {
+        max-height: calc(100svh - 160px) !important;
+    }
+
     .modal-caption {
         left: 16px;
         right: 16px;
-        bottom: max(16px, env(safe-area-inset-bottom));
+        bottom: calc(var(--mobile-viewport-overbleed) + max(16px, env(safe-area-inset-bottom)));
         max-width: none;
         max-height: 30vh;
         padding: 14px 16px;
@@ -1454,7 +1514,7 @@ section {
 
     .modal-caption-toggle {
         right: 16px;
-        bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px);
+        bottom: calc(var(--mobile-viewport-overbleed) + max(16px, env(safe-area-inset-bottom)) + 56px);
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
@@ -1462,7 +1522,7 @@ section {
 
     .modal-fullscreen-toggle {
         right: 16px;
-        bottom: calc(max(16px, env(safe-area-inset-bottom)) + 104px);
+        bottom: calc(var(--mobile-viewport-overbleed) + max(16px, env(safe-area-inset-bottom)) + 104px);
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
@@ -1600,7 +1660,10 @@ footer {
 
 /* Tablet & Small Laptops (1024px and below) */
 @media (max-width: 1024px) {
-    :root { --margin: 64px; }
+    :root {
+        --margin: 64px;
+        --mobile-viewport-overbleed: 15vh;
+    }
     h1 { font-size: 80px; }
 
     /* Trigger Mobile Hamburger Menu on Tablets */
@@ -1608,11 +1671,14 @@ footer {
 
     .nav-links {
         position: fixed;
-        top: 0;
+        top: calc(-1 * var(--mobile-viewport-overbleed));
         right: 0;
+        bottom: calc(-1 * var(--mobile-viewport-overbleed));
         transform: translateX(100%);
         width: 100%;
-        height: 100vh;
+        height: auto;
+        min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         background: var(--nav-bg);
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
@@ -1622,7 +1688,7 @@ footer {
         gap: 16px;
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Faster snap */
         z-index: 1000;
-        padding: 96px 48px;
+        padding: calc(96px + var(--mobile-viewport-overbleed) + env(safe-area-inset-top)) 48px calc(96px + var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
         margin-left: 0;
         overflow-x: hidden;
         overflow-y: auto;
@@ -1713,8 +1779,7 @@ footer {
     :root {
         --margin: 48px;
         --gutter: 16px;
-        --hero-mobile-overbleed: 15vh;
-        --splash-mobile-overbleed: 15vh;
+        --hero-mobile-overbleed: var(--mobile-viewport-overbleed);
     }
     
     h1 { font-size: 64px; }
@@ -1725,9 +1790,35 @@ footer {
 
     nav { padding: 0 24px; }
 
+    html,
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    body::after {
+        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
+    }
+
+    .app-transition-curtain,
+    .splash-screen {
+        top: calc(-1 * var(--mobile-viewport-overbleed));
+        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+    }
+
+    .splash-screen {
+        padding-top: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-top));
+        padding-bottom: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
+    }
+
     .hero {
         height: calc(100vh + var(--hero-mobile-overbleed));
+        height: calc(100lvh + var(--hero-mobile-overbleed));
         min-height: calc(100vh + var(--hero-mobile-overbleed));
+        min-height: calc(100svh + var(--hero-mobile-overbleed));
         overflow: hidden;
         padding-bottom: calc(var(--margin) + 8vh + var(--hero-mobile-overbleed) + env(safe-area-inset-bottom));
     }
@@ -1736,14 +1827,6 @@ footer {
         top: 0;
         bottom: auto;
         height: calc(100% + var(--hero-mobile-overbleed));
-    }
-
-    .splash-screen {
-        top: calc(-1 * var(--splash-mobile-overbleed));
-        height: calc(100vh + var(--splash-mobile-overbleed) + var(--splash-mobile-overbleed));
-        min-height: calc(100svh + var(--splash-mobile-overbleed) + var(--splash-mobile-overbleed));
-        padding-top: calc(var(--splash-mobile-overbleed) + env(safe-area-inset-top));
-        padding-bottom: calc(var(--splash-mobile-overbleed) + env(safe-area-inset-bottom));
     }
 
     .hero-content {
@@ -1823,6 +1906,10 @@ footer {
     /* Client Logos */
     [style*="gap: 120px"] { gap: 64px !important; }
 
+    footer {
+        padding-bottom: calc(64px + var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
+    }
+
     .footer-ticker span { font-size: 18px; padding-right: 16px; }
 }
 
@@ -1864,7 +1951,7 @@ footer {
         width: min(220px, calc(100vw - 48px));
     }
     .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.2em; }
-    .hero-scroll-hint, .about-scroll-hint { right: 24px; bottom: 24px; }
+    .hero-scroll-hint, .about-scroll-hint { right: 24px; bottom: calc(24px + env(safe-area-inset-bottom)); }
     .scroll-hint { gap: 10px; font-size: 9px; letter-spacing: 0.26em; }
     .scroll-hint__line { height: 38px; }
 
@@ -1895,7 +1982,7 @@ footer {
     .cta-section { padding: 96px 0; }
     .btn-bold { min-width: unset; width: 70%; margin: 16px auto; font-size: 12px; letter-spacing: 0.25em; padding: 8px 0; }
     
-    footer { padding: 96px 0 96px; }
+    footer { padding: 96px 0 calc(96px + var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom)); }
 
     /* Refine Bio Readability */
     .split-layout .bio { 
@@ -1914,7 +2001,7 @@ footer {
     .contact-list .btn-bold { min-width: unset; width: 100%; margin: 8px 0; font-size: 11px; letter-spacing: 0.2em; }
 
     .back-to-top {
-        bottom: 24px;
+        bottom: calc(24px + env(safe-area-inset-bottom));
         right: 24px;
         padding: 12px 16px;
         font-size: 9px;
