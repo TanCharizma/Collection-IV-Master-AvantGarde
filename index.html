@@ -67,6 +67,8 @@
             const isReload = navEntries.length > 0 ? navEntries[0].type === 'reload' : (window.performance && performance.navigation && performance.navigation.type === 1);
             if (sessionStorage.getItem('hasSeenSplash') && !isReload) {
                 document.getElementById('splash-screen').style.display = 'none';
+            } else {
+                document.body.classList.add('splash-active');
             }
         })();
     </script>

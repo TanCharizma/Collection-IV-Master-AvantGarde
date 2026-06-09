@@ -33,6 +33,76 @@ document.addEventListener('DOMContentLoaded', () => {
             cachedWidth = window.innerWidth;
         }
     }, { passive: true });
+
+    // Keep the iOS/Safari bottom browser area visually attached to the active section.
+    const mobileEdgeMedia = window.matchMedia('(max-width: 1024px)');
+    const rootStyle = document.documentElement.style;
+    const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const isVisibleModal = (el) => el && el.classList.contains('show-modal');
+    const getSolidBackground = (element) => {
+        let current = element;
+        while (current && current !== document.documentElement) {
+            const bg = getComputedStyle(current).backgroundColor;
+            if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return bg;
+            current = current.parentElement;
+        }
+        return getCssVar('--bg') || '#EAEAEA';
+    };
+
+    let edgeRaf = null;
+    const updateMobileEdgeBackground = () => {
+        edgeRaf = null;
+        if (!mobileEdgeMedia.matches) {
+            rootStyle.removeProperty('--mobile-edge-bg');
+            return;
+        }
+
+        const splash = document.getElementById('splash-screen');
+        const navOverlay = document.querySelector('nav.nav-open .nav-links');
+        const imageModal = document.getElementById('imageModal');
+        const compModal = document.getElementById('compCardModal');
+
+        let edgeColor = getCssVar('--bg') || '#EAEAEA';
+        if (document.body.classList.contains('splash-active') && splash && splash.style.display !== 'none') {
+            edgeColor = getSolidBackground(splash);
+        } else if (isVisibleModal(imageModal) || isVisibleModal(compModal)) {
+            edgeColor = '#000000';
+        } else if (navOverlay) {
+            edgeColor = getSolidBackground(navOverlay);
+        } else {
+            const probeX = Math.max(1, Math.min(window.innerWidth - 1, window.innerWidth / 2));
+            const probeY = Math.max(1, window.innerHeight - 2);
+            const probe = document.elementFromPoint(probeX, probeY);
+            const surface = probe && probe.closest('footer, .hero, section, nav');
+
+            if (surface && surface.classList.contains('hero')) {
+                edgeColor = '#000000';
+            } else if (surface) {
+                edgeColor = getSolidBackground(surface);
+            }
+        }
+
+        rootStyle.setProperty('--mobile-edge-bg', edgeColor);
+    };
+
+    const requestMobileEdgeUpdate = () => {
+        if (edgeRaf === null) edgeRaf = requestAnimationFrame(updateMobileEdgeBackground);
+    };
+
+    updateMobileEdgeBackground();
+    window.addEventListener('scroll', requestMobileEdgeUpdate, { passive: true });
+    window.addEventListener('resize', requestMobileEdgeUpdate, { passive: true });
+    if (mobileEdgeMedia.addEventListener) {
+        mobileEdgeMedia.addEventListener('change', requestMobileEdgeUpdate);
+    } else if (mobileEdgeMedia.addListener) {
+        mobileEdgeMedia.addListener(requestMobileEdgeUpdate);
+    }
+    if ('MutationObserver' in window) {
+        const edgeObserver = new MutationObserver(requestMobileEdgeUpdate);
+        [document.body, document.querySelector('nav'), document.getElementById('splash-screen'), document.getElementById('imageModal'), document.getElementById('compCardModal')]
+            .filter(Boolean)
+            .forEach(el => edgeObserver.observe(el, { attributes: true, attributeFilter: ['class', 'style'] }));
+    }
     
     // --- 1. GLOBAL REVEAL ANIMATIONS ---
     const revealOptions = {
@@ -167,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     splashScreen.classList.add('hidden');
                     setTimeout(() => {
                         document.body.style.overflow = ''; // Unlock scrolling
+                        document.body.classList.remove('splash-active');
                         triggerHeroEntrance();
                     }, 400); // Trigger hero text reveal exactly halfway through the splash screen fade-out
                 });

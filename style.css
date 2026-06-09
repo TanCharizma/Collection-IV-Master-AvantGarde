@@ -28,6 +28,7 @@
     --alt-bg: #DFDFDF;
     --border-subtle: #000000; /* HARSH 1px solid black wireframes */
     --mobile-viewport-overbleed: 0px;
+    --mobile-edge-bg: var(--bg);
     color-scheme: light;
 }
 
@@ -76,6 +77,23 @@ body {
     max-width: 100%;
 }
 
+body.splash-active {
+    background-color: var(--bg);
+}
+
+body.splash-active nav,
+body.splash-active .hero,
+body.splash-active section,
+body.splash-active footer,
+body.splash-active .back-to-top,
+body.splash-active .modal {
+    visibility: hidden;
+}
+
+body.splash-active .splash-screen {
+    visibility: visible;
+}
+
 body::before {
     content: "";
     position: fixed;
@@ -95,7 +113,7 @@ body::after {
     right: 0;
     bottom: 0;
     height: env(safe-area-inset-bottom);
-    background: var(--bg);
+    background: var(--mobile-edge-bg);
     z-index: 99;
     pointer-events: none;
 }
@@ -1093,12 +1111,37 @@ section {
     width: auto;
     min-height: 100vh;
     background-color: var(--bg);
+    box-shadow: 0 0 0 100vmax var(--bg);
     z-index: 10000;
     display: flex;
     justify-content: center;
     align-items: center;
+    isolation: isolate;
+    overflow: visible;
     transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
 }
+
+.splash-screen::before,
+.splash-screen::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.splash-screen::before {
+    top: -40vh;
+    height: 40vh;
+}
+
+.splash-screen::after {
+    bottom: -60vh;
+    height: 80vh;
+}
+
 .splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
@@ -1111,6 +1154,8 @@ section {
     }
 }
 .splash-stack {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1830,6 +1875,16 @@ footer {
     .splash-screen {
         padding-top: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-top));
         padding-bottom: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
+    }
+
+    .splash-screen::before {
+        top: calc(-1 * var(--mobile-viewport-overbleed) * 2);
+        height: calc(var(--mobile-viewport-overbleed) * 2 + env(safe-area-inset-top));
+    }
+
+    .splash-screen::after {
+        bottom: calc(-1 * var(--mobile-viewport-overbleed) * 3);
+        height: calc(var(--mobile-viewport-overbleed) * 4 + env(safe-area-inset-bottom));
     }
 
     .hero {
