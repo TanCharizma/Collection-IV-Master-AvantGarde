@@ -30,6 +30,7 @@
     --mobile-viewport-overbleed: 0px;
     --mobile-edge-bg: var(--bg);
     --visual-viewport-bottom: 0px;
+    --modal-mobile-toolbar-clearance: 0px;
     color-scheme: light;
 }
 
@@ -1546,6 +1547,7 @@ section {
 
 @media (max-width: 768px) {
     .modal {
+        --modal-mobile-toolbar-clearance: clamp(148px, 18vh, 220px);
         top: calc(-1 * var(--mobile-viewport-overbleed));
         bottom: auto;
         height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
@@ -1574,7 +1576,7 @@ section {
     .modal-caption {
         left: 16px;
         right: 16px;
-        bottom: calc(var(--mobile-viewport-overbleed) + var(--visual-viewport-bottom) + max(16px, env(safe-area-inset-bottom)));
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)));
         max-width: none;
         max-height: min(24vh, 190px);
         padding: 14px 16px;
@@ -1586,7 +1588,7 @@ section {
 
     .modal-caption-toggle {
         right: 16px;
-        bottom: calc(var(--mobile-viewport-overbleed) + var(--visual-viewport-bottom) + max(16px, env(safe-area-inset-bottom)) + 56px);
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + 56px);
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
@@ -1594,7 +1596,7 @@ section {
 
     .modal-fullscreen-toggle {
         right: 16px;
-        bottom: calc(var(--mobile-viewport-overbleed) + var(--visual-viewport-bottom) + max(16px, env(safe-area-inset-bottom)) + 104px);
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + 104px);
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
