@@ -293,8 +293,19 @@
 
     // Theme Switching Logic
     const themeToggle = navElement.querySelector('#themeToggle');
+    const themeColors = {
+        light: '#EAEAEA',
+        dark: '#050505'
+    };
+    const updateBrowserThemeColor = (theme) => {
+        const color = themeColors[theme] || themeColors.light;
+        document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
+            meta.setAttribute('content', color);
+        });
+    };
     const updateThemeUI = (theme, persist = true) => {
         document.documentElement.setAttribute('data-theme', theme);
+        updateBrowserThemeColor(theme);
         const enSpan = themeToggle.querySelector('[lang="en"]');
         const thSpan = themeToggle.querySelector('[lang="th"]');
         if (theme === 'dark') {
@@ -314,8 +325,19 @@
 
     // Initialize theme on load. A saved visitor choice wins; otherwise follow the OS preference.
     const savedTheme = localStorage.getItem('preferredTheme');
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const systemTheme = systemThemeQuery.matches ? 'dark' : 'light';
     updateThemeUI(savedTheme || systemTheme, Boolean(savedTheme));
+    const handleSystemThemeChange = e => {
+        if (!localStorage.getItem('preferredTheme')) {
+            updateThemeUI(e.matches ? 'dark' : 'light', false);
+        }
+    };
+    if (systemThemeQuery.addEventListener) {
+        systemThemeQuery.addEventListener('change', handleSystemThemeChange);
+    } else if (systemThemeQuery.addListener) {
+        systemThemeQuery.addListener(handleSystemThemeChange);
+    }
 
     // Language Switching Logic
     const setLanguage = (lang) => {

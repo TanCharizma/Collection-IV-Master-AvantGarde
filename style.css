@@ -75,6 +75,18 @@ body {
     max-width: 100%;
 }
 
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--bg);
+    z-index: 99;
+    pointer-events: none;
+}
+
 @supports (overflow: clip) {
     html,
     body {
@@ -1698,7 +1710,12 @@ footer {
 
 /* Small Tablets & Large Mobiles (768px and below) */
 @media (max-width: 768px) {
-    :root { --margin: 48px; --gutter: 16px; --hero-mobile-overbleed: 15vh; }
+    :root {
+        --margin: 48px;
+        --gutter: 16px;
+        --hero-mobile-overbleed: 15vh;
+        --splash-mobile-overbleed: 15vh;
+    }
     
     h1 { font-size: 64px; }
     h2 { font-size: 36px; margin-bottom: 48px; }
@@ -1716,9 +1733,17 @@ footer {
     }
 
     .hero-bg-frame {
-        top: calc(-1 * var(--hero-mobile-overbleed));
+        top: 0;
         bottom: auto;
         height: calc(100% + var(--hero-mobile-overbleed));
+    }
+
+    .splash-screen {
+        top: calc(-1 * var(--splash-mobile-overbleed));
+        height: calc(100vh + var(--splash-mobile-overbleed) + var(--splash-mobile-overbleed));
+        min-height: calc(100svh + var(--splash-mobile-overbleed) + var(--splash-mobile-overbleed));
+        padding-top: calc(var(--splash-mobile-overbleed) + env(safe-area-inset-top));
+        padding-bottom: calc(var(--splash-mobile-overbleed) + env(safe-area-inset-bottom));
     }
 
     .hero-content {
