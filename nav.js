@@ -203,16 +203,15 @@
             const diff = targetY - currentY;
             const elapsed = time - startTime;
             const distance = Math.abs(diff);
-            const stopThreshold = isMobileScroll ? 1.25 : 0.6;
+            const stopThreshold = isMobileScroll ? 2.4 : 0.6;
 
             if (distance < stopThreshold) {
-                window.scrollTo(0, targetY);
-
                 if (isMobileScroll) {
                     restoreScrollBehavior();
                     return;
                 }
 
+                window.scrollTo(0, targetY);
                 hasSnappedToTarget = true;
                 stableFrames++;
                 if (elapsed >= minTrackTime && stableFrames >= 8) {
