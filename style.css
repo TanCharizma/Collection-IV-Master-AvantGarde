@@ -121,6 +121,10 @@ body::after {
     pointer-events: none;
 }
 
+.mobile-status-cover {
+    display: none;
+}
+
 @media (max-width: 1024px) {
     html,
     body {
@@ -143,6 +147,18 @@ body::after {
         bottom: calc(-1 * var(--mobile-viewport-overbleed));
         height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
         z-index: 1500;
+    }
+
+    .mobile-status-cover {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--mobile-statusbar-clearance);
+        background: var(--bg);
+        z-index: 95;
+        pointer-events: none;
     }
 }
 

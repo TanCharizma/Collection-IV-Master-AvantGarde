@@ -27,6 +27,7 @@
     }
 
     const navHTML = `
+    <div class="mobile-status-cover" aria-hidden="true"></div>
     <nav>
         <a href="${logoHref}" class="logo">${window.CLIENT_CONFIG.name}</a>
         <div class="nav-links">
@@ -205,13 +206,16 @@
             const stopThreshold = isMobileScroll ? 1.25 : 0.6;
 
             if (distance < stopThreshold) {
-                if (!hasSnappedToTarget) {
-                    window.scrollTo(0, targetY);
-                    hasSnappedToTarget = true;
+                window.scrollTo(0, targetY);
+
+                if (isMobileScroll) {
+                    restoreScrollBehavior();
+                    return;
                 }
 
+                hasSnappedToTarget = true;
                 stableFrames++;
-                if (elapsed >= minTrackTime && stableFrames >= (isMobileScroll ? 4 : 8)) {
+                if (elapsed >= minTrackTime && stableFrames >= 8) {
                     restoreScrollBehavior();
                     return;
                 }
