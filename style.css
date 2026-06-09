@@ -31,6 +31,7 @@
     --mobile-edge-bg: var(--bg);
     --visual-viewport-bottom: 0px;
     --modal-mobile-toolbar-clearance: 0px;
+    --mobile-statusbar-clearance: 0px;
     color-scheme: light;
 }
 
@@ -135,7 +136,7 @@ body::after {
 
     body::before {
         top: calc(-1 * var(--mobile-viewport-overbleed));
-        height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-top));
+        height: calc(var(--mobile-viewport-overbleed) + var(--mobile-statusbar-clearance) + env(safe-area-inset-top));
     }
 
     body::after {
@@ -274,10 +275,10 @@ nav {
 nav::before {
     content: "";
     position: fixed;
-    top: calc(-1 * env(safe-area-inset-top));
+    top: calc(-1 * (var(--mobile-statusbar-clearance) + env(safe-area-inset-top)));
     left: 0;
     right: 0;
-    height: env(safe-area-inset-top);
+    height: calc(var(--mobile-statusbar-clearance) + env(safe-area-inset-top));
     background: var(--bg);
     pointer-events: none;
 }
@@ -570,7 +571,7 @@ body.lang-th .lang-switch .th::after {
 
 .hero-bg {
     background-repeat: no-repeat;
-    background-position: center 10%;
+    background-position: center 4%;
     background-size: cover;
     transform-origin: center 20%;
     transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
@@ -1737,6 +1738,7 @@ footer {
     :root {
         --margin: 64px;
         --mobile-viewport-overbleed: 15vh;
+        --mobile-statusbar-clearance: clamp(54px, 7vh, 86px);
     }
     h1 { font-size: 80px; }
 
