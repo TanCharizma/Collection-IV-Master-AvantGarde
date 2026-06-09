@@ -186,6 +186,7 @@
         const minTrackTime = window.innerWidth <= 768 ? 1400 : 650;
         let stableFrames = 0;
         let lastTime = startTime;
+        let hasSnappedToTarget = false;
 
         const scrollLoop = (time) => {
             if (isUserScrolling || scrollRun !== activeAnchorScroll) {
@@ -204,10 +205,13 @@
             const stopThreshold = isMobileScroll ? 1.25 : 0.6;
 
             if (distance < stopThreshold) {
-                window.scrollTo(0, targetY);
+                if (!hasSnappedToTarget) {
+                    window.scrollTo(0, targetY);
+                    hasSnappedToTarget = true;
+                }
 
                 stableFrames++;
-                if (elapsed >= minTrackTime && stableFrames >= 8) {
+                if (elapsed >= minTrackTime && stableFrames >= (isMobileScroll ? 4 : 8)) {
                     restoreScrollBehavior();
                     return;
                 }
@@ -217,8 +221,9 @@
             }
 
             stableFrames = 0;
+            hasSnappedToTarget = false;
             const speed = isMobileScroll
-                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.78, distance / 1000))
+                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.7, distance / 1000))
                 : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
             const lerpFactor = 1 - Math.exp(-speed * dt);
             window.scrollTo(0, currentY + diff * lerpFactor);
