@@ -26,13 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cache viewport height globally for scroll calculations
     let vh = window.innerHeight;
     let cachedWidth = window.innerWidth;
+    const updateVisualViewportInsets = () => {
+        const viewport = window.visualViewport;
+        const bottomInset = viewport
+            ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
+            : 0;
+        document.documentElement.style.setProperty('--visual-viewport-bottom', `${Math.round(bottomInset)}px`);
+    };
+    updateVisualViewportInsets();
     window.addEventListener('resize', () => {
         // Only update vh if the width actually changes to prevent mobile address bar thrashing
         if (window.innerWidth !== cachedWidth) {
             vh = window.innerHeight;
             cachedWidth = window.innerWidth;
         }
+        updateVisualViewportInsets();
     }, { passive: true });
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateVisualViewportInsets, { passive: true });
+        window.visualViewport.addEventListener('scroll', updateVisualViewportInsets, { passive: true });
+    }
 
     // Keep the iOS/Safari bottom browser area visually attached to the active section.
     const mobileEdgeMedia = window.matchMedia('(max-width: 1024px)');
