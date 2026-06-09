@@ -27,6 +27,7 @@
     --dropdown-bg: #EAEAEA;
     --alt-bg: #DFDFDF;
     --border-subtle: #000000; /* HARSH 1px solid black wireframes */
+    color-scheme: light;
 }
 
 [data-theme="dark"] {
@@ -39,11 +40,28 @@
     --border-subtle: #FFFFFF; /* HARSH 1px solid white wireframes */
     --gold: #A3CC00; /* Dimmed Acid Green - Softer for Dark Mode */
     --gold-footer: #C8FF33; /* Brighter green for footer readability on black */
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --bg: #050505; /* Pitch black */
+        --text: #FFFFFF; /* Pure white */
+        --surface: #151515;
+        --nav-bg: rgba(5, 5, 5, 0.95);
+        --dropdown-bg: #050505;
+        --alt-bg: #0A0A0A;
+        --border-subtle: #FFFFFF;
+        --gold: #A3CC00;
+        --gold-footer: #C8FF33;
+        color-scheme: dark;
+    }
 }
 
 html {
     width: 100%;
     max-width: 100%;
+    background-color: var(--bg);
     scrollbar-width: thin;
     scrollbar-color: var(--text) var(--bg);
     scroll-behavior: smooth;
@@ -51,6 +69,7 @@ html {
 }
 
 body {
+    background-color: var(--bg);
     overflow-x: hidden;
     width: 100%;
     max-width: 100%;
@@ -484,11 +503,11 @@ body.lang-th .lang-switch .th::after {
 
 .hero.loaded .hero-bg-frame {
     opacity: 1;
-    animation: heroEntranceZoom 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Entrance owns only the wrapper transform */
+    animation: heroEntranceZoom 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Entrance owns only the wrapper transform */
 }
 
 @keyframes heroEntranceZoom {
-    0% { transform: translate3d(0, 0, 0) scale3d(1.04, 1.04, 1); }
+    0% { transform: translate3d(0, 0, 0) scale3d(1.075, 1.075, 1); }
     100% { transform: translate3d(0, 0, 0) scale3d(1, 1, 1); }
 }
 
@@ -561,6 +580,8 @@ body.lang-th .lang-switch .th::after {
     user-select: none;
     pointer-events: none; /* Stops expensive hit-testing on the massive moving letters */
     contain: layout paint;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
 
 .marquee-track {
@@ -847,7 +868,7 @@ section {
     position: relative;
     z-index: 1;
     background-color: var(--surface);
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .full-grid {
@@ -882,18 +903,19 @@ section {
     background-color: var(--surface);
     position: relative;
     z-index: 1; /* Establishes clean stacking context */
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1);
     border: 1px solid var(--text); /* Frames ONLY the images */
 }
 
 /* Image Hover Effects */
-.featured-item img:hover,
-.full-grid img:hover,
-.digitals-grid img:hover { 
-    z-index: 2; /* Elevates image above the wireframe grid lines */
-    opacity: 0.999; /* Force Safari layer redraw */
-    transform: scale(1.02); /* Physical lift makes the hover undeniable */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25); /* Optimized shadow for buttery smooth interaction */
+@media (hover: hover) and (pointer: fine) {
+    .featured-item img:hover,
+    .full-grid img:hover,
+    .digitals-grid img:hover {
+        z-index: 2; /* Elevates image above the wireframe grid lines */
+        opacity: 0.999; /* Force Safari layer redraw */
+        transform: scale(1.008); /* Subtle gallery response without a card-like lift */
+    }
 }
 
 .video-grid {
@@ -961,7 +983,7 @@ section {
     display: block;
     position: relative;
     z-index: 1;
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Prevent visual drop-glitch when opening modals */
@@ -1244,6 +1266,8 @@ section {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.95);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
@@ -1578,6 +1602,8 @@ footer {
         width: 100%;
         height: 100vh;
         background: var(--nav-bg);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -1672,7 +1698,7 @@ footer {
 
 /* Small Tablets & Large Mobiles (768px and below) */
 @media (max-width: 768px) {
-    :root { --margin: 48px; --gutter: 16px; }
+    :root { --margin: 48px; --gutter: 16px; --hero-mobile-overbleed: 15vh; }
     
     h1 { font-size: 64px; }
     h2 { font-size: 36px; margin-bottom: 48px; }
@@ -1683,7 +1709,16 @@ footer {
     nav { padding: 0 24px; }
 
     .hero {
-        padding-bottom: calc(var(--margin) + 8vh);
+        height: calc(100vh + var(--hero-mobile-overbleed));
+        min-height: calc(100vh + var(--hero-mobile-overbleed));
+        overflow: hidden;
+        padding-bottom: calc(var(--margin) + 8vh + var(--hero-mobile-overbleed) + env(safe-area-inset-bottom));
+    }
+
+    .hero-bg-frame {
+        top: calc(-1 * var(--hero-mobile-overbleed));
+        bottom: auto;
+        height: calc(100% + var(--hero-mobile-overbleed));
     }
 
     .hero-content {
@@ -1778,7 +1813,7 @@ footer {
     .btn-book { padding: 8px 16px; font-size: 12px; }
     
     .hero {
-        padding-bottom: calc(var(--margin) + 10vh);
+        padding-bottom: calc(var(--margin) + 10vh + var(--hero-mobile-overbleed) + env(safe-area-inset-bottom));
     }
 
     .hero-text-block {

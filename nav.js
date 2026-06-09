@@ -293,7 +293,7 @@
 
     // Theme Switching Logic
     const themeToggle = navElement.querySelector('#themeToggle');
-    const updateThemeUI = (theme) => {
+    const updateThemeUI = (theme, persist = true) => {
         document.documentElement.setAttribute('data-theme', theme);
         const enSpan = themeToggle.querySelector('[lang="en"]');
         const thSpan = themeToggle.querySelector('[lang="th"]');
@@ -304,7 +304,7 @@
             enSpan.textContent = 'Dark';
             thSpan.textContent = 'โหมดมืด';
         }
-        localStorage.setItem('preferredTheme', theme);
+        if (persist) localStorage.setItem('preferredTheme', theme);
     };
 
     themeToggle.addEventListener('click', () => {
@@ -312,8 +312,10 @@
         updateThemeUI(isDark ? 'light' : 'dark');
     });
 
-    // Initialize theme on load
-    updateThemeUI(localStorage.getItem('preferredTheme') || 'light');
+    // Initialize theme on load. A saved visitor choice wins; otherwise follow the OS preference.
+    const savedTheme = localStorage.getItem('preferredTheme');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    updateThemeUI(savedTheme || systemTheme, Boolean(savedTheme));
 
     // Language Switching Logic
     const setLanguage = (lang) => {

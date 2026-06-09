@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 heroEntranceComplete = true;
                 if (heroBgFrame) heroBgFrame.style.animation = 'none'; // Keep the wrapper settled after the intro zoom
-            }, 1500); // Reduced to 1500ms for a much faster, smoother come-in
+            }, 2200); // Matches the cinematic hero entrance zoom duration
         };
 
         const splashScreen = document.getElementById('splash-screen');
@@ -350,14 +350,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- SCROLL LOCK HELPER ---
     // Prevents the background layout from shifting when the scrollbar disappears
+    let scrollLockState = null;
     const lockScroll = () => {
+        if (scrollLockState) return;
+
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-        document.body.style.overflow = 'hidden';
+        const body = document.body;
+        const root = document.documentElement;
+
+        scrollLockState = {
+            scrollY: window.scrollY,
+            rootOverflow: root.style.overflow,
+            rootScrollBehavior: root.style.scrollBehavior,
+            bodyPosition: body.style.position,
+            bodyTop: body.style.top,
+            bodyLeft: body.style.left,
+            bodyRight: body.style.right,
+            bodyWidth: body.style.width,
+            bodyOverflow: body.style.overflow,
+            bodyPaddingRight: body.style.paddingRight
+        };
+
+        root.style.overflow = 'hidden';
+        root.style.scrollBehavior = 'auto';
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollLockState.scrollY}px`;
+        body.style.left = '0';
+        body.style.right = '0';
+        body.style.width = '100%';
+        body.style.overflow = 'hidden';
+        body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : '';
     };
+
     const unlockScroll = () => {
-        document.body.style.paddingRight = '';
-        document.body.style.overflow = '';
+        if (!scrollLockState) return;
+
+        const body = document.body;
+        const root = document.documentElement;
+        const scrollY = scrollLockState.scrollY;
+        const rootScrollBehavior = scrollLockState.rootScrollBehavior;
+
+        root.style.overflow = scrollLockState.rootOverflow;
+        root.style.scrollBehavior = 'auto';
+        body.style.position = scrollLockState.bodyPosition;
+        body.style.top = scrollLockState.bodyTop;
+        body.style.left = scrollLockState.bodyLeft;
+        body.style.right = scrollLockState.bodyRight;
+        body.style.width = scrollLockState.bodyWidth;
+        body.style.overflow = scrollLockState.bodyOverflow;
+        body.style.paddingRight = scrollLockState.bodyPaddingRight;
+        scrollLockState = null;
+
+        window.scrollTo(0, scrollY);
+        if (rootScrollBehavior) {
+            root.style.scrollBehavior = rootScrollBehavior;
+        } else {
+            root.style.removeProperty('scroll-behavior');
+        }
     };
 
     // --- 4. IMAGE MODAL LOGIC (With Keyboard Support) ---
