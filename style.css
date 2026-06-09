@@ -100,6 +100,31 @@ body::after {
     pointer-events: none;
 }
 
+@media (max-width: 1024px) {
+    html,
+    body {
+        min-height: 100vh;
+        min-height: 100lvh;
+        background-color: var(--bg);
+        overscroll-behavior-y: none;
+    }
+
+    body {
+        min-height: calc(100lvh + var(--mobile-viewport-overbleed));
+    }
+
+    body::before {
+        top: calc(-1 * var(--mobile-viewport-overbleed));
+        height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-top));
+    }
+
+    body::after {
+        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
+        z-index: 1500;
+    }
+}
+
 @supports (overflow: clip) {
     html,
     body {
@@ -1476,8 +1501,9 @@ section {
 @media (max-width: 768px) {
     .modal {
         top: calc(-1 * var(--mobile-viewport-overbleed));
-        bottom: calc(-1 * var(--mobile-viewport-overbleed));
-        height: auto;
+        bottom: auto;
+        height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        height: calc(100lvh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
     }
@@ -1673,10 +1699,11 @@ footer {
         position: fixed;
         top: calc(-1 * var(--mobile-viewport-overbleed));
         right: 0;
-        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        bottom: auto;
         transform: translateX(100%);
         width: 100%;
-        height: auto;
+        height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        height: calc(100lvh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         background: var(--nav-bg);
@@ -1790,21 +1817,12 @@ footer {
 
     nav { padding: 0 24px; }
 
-    html,
-    body {
-        min-height: 100vh;
-        min-height: 100dvh;
-    }
-
-    body::after {
-        bottom: calc(-1 * var(--mobile-viewport-overbleed));
-        height: calc(var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom));
-    }
-
     .app-transition-curtain,
     .splash-screen {
         top: calc(-1 * var(--mobile-viewport-overbleed));
-        bottom: calc(-1 * var(--mobile-viewport-overbleed));
+        bottom: auto;
+        height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
+        height: calc(100lvh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
         min-height: calc(100svh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
     }
