@@ -138,6 +138,8 @@
         navElement.classList.remove('nav-open');
         document.body.style.overflow = '';
     };
+    let menuTouchStartX = 0;
+    let menuTouchStartY = 0;
     const runAfterViewportSettles = (callback, delay = 0) => {
         const run = () => {
             requestAnimationFrame(() => {
@@ -184,7 +186,7 @@
         });
 
         const startTime = performance.now();
-        const minTrackTime = window.innerWidth <= 768 ? 1400 : 650;
+        const minTrackTime = window.innerWidth <= 768 ? 1100 : 650;
         let stableFrames = 0;
         let lastTime = startTime;
         let currentY = window.scrollY;
@@ -202,16 +204,21 @@
             const diff = targetY - currentY;
             const elapsed = time - startTime;
             const distance = Math.abs(diff);
-            const stopThreshold = isMobileScroll ? 2.4 : 0.6;
+            const stopThreshold = isMobileScroll ? 0.8 : 0.6;
 
             if (distance < stopThreshold) {
+                stableFrames++;
                 if (isMobileScroll) {
-                    restoreScrollBehavior();
+                    if (elapsed >= minTrackTime && stableFrames >= 5) {
+                        restoreScrollBehavior();
+                        return;
+                    }
+
+                    requestAnimationFrame(scrollLoop);
                     return;
                 }
 
                 window.scrollTo(0, targetY);
-                stableFrames++;
                 if (elapsed >= minTrackTime && stableFrames >= 8) {
                     restoreScrollBehavior();
                     return;
@@ -267,6 +274,21 @@
 
                 closeMobileMenu();
             });
+
+            navLinks.addEventListener('touchstart', (e) => {
+                if (!navElement.classList.contains('nav-open') || e.touches.length !== 1) return;
+                menuTouchStartX = e.touches[0].screenX;
+                menuTouchStartY = e.touches[0].screenY;
+            }, { passive: true });
+
+            navLinks.addEventListener('touchend', (e) => {
+                if (!navElement.classList.contains('nav-open') || !e.changedTouches.length) return;
+                const deltaX = e.changedTouches[0].screenX - menuTouchStartX;
+                const deltaY = e.changedTouches[0].screenY - menuTouchStartY;
+                if (deltaX > 70 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+                    closeMobileMenu();
+                }
+            }, { passive: true });
         }
 
         // Close menu when a link is clicked
@@ -281,7 +303,7 @@
 
                     if (navElement.classList.contains('nav-open')) {
                         closeMobileMenu();
-                        glideToAnchor(targetId, 140);
+                        glideToAnchor(targetId, 320);
                     } else {
                         glideToAnchor(targetId);
                     }

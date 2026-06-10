@@ -496,7 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal,
         ignoreElement,
         allowHorizontalSwipe = false,
-        onHorizontalSwipe
+        onHorizontalSwipe,
+        getDragCenterY = () => '-50%'
     }) => {
         if (!modalElement || !dragElement) return;
 
@@ -526,20 +527,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const deltaY = e.touches[0].screenY - touchStartY;
 
             if (!activeGesture) {
-                if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
-                activeGesture = Math.abs(deltaY) > Math.abs(deltaX) * 1.2 ? 'vertical' : 'horizontal';
+                if (Math.abs(deltaX) < 12 && Math.abs(deltaY) < 12) return;
+                if (deltaY > 18 && Math.abs(deltaY) > Math.abs(deltaX) * 1.8) {
+                    activeGesture = 'vertical';
+                } else if (Math.abs(deltaX) > 16 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+                    activeGesture = 'horizontal';
+                } else {
+                    return;
+                }
             }
 
             if (activeGesture === 'vertical') {
                 const dragY = Math.max(0, deltaY);
                 const scale = Math.max(0.94, 1 - dragY / 1800);
-                dragElement.style.transform = `translate(-50%, calc(-50% + ${dragY * 0.72}px)) scale(${scale})`;
+                dragElement.style.transform = `translate(-50%, calc(${getDragCenterY()} + ${dragY * 0.72}px)) scale(${scale})`;
                 dragElement.style.opacity = `${Math.max(0.35, 1 - dragY / 260)}`;
                 return;
             }
 
             if (allowHorizontalSwipe) {
-                dragElement.style.transform = `translate(calc(-50% + ${deltaX * 0.6}px), -50%)`;
+                dragElement.style.transform = `translate(calc(-50% + ${deltaX * 0.6}px), ${getDragCenterY()})`;
                 dragElement.style.opacity = `${Math.max(0.3, 1 - Math.abs(deltaX) / window.innerWidth)}`;
             }
         }, { passive: false });
@@ -570,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             dragElement.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
-            dragElement.style.transform = 'translate(-50%, -50%)';
+            dragElement.style.transform = `translate(-50%, ${getDragCenterY()})`;
             dragElement.style.opacity = '1';
         }, { passive: true });
     };
