@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentCaptionSrc = src;
 
             if (modalCaptionToggle) {
-                modalCaptionToggle.classList.toggle('visible', captionsEnabled);
+                modalCaptionToggle.classList.toggle('visible', captionsEnabled && hasCaptionData);
                 modalCaptionToggle.setAttribute('aria-pressed', visitorCaptionsEnabled ? 'true' : 'false');
             }
             if (modalCaptionToggleEn) modalCaptionToggleEn.textContent = visitorCaptionsEnabled ? 'Captions: On' : 'Captions: Off';
