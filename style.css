@@ -1541,6 +1541,10 @@ section {
     bottom: 82px;
 }
 
+.modal:not(.has-caption-controls) .modal-fullscreen-toggle {
+    bottom: 32px;
+}
+
 .modal.is-immersive .modal-caption,
 .modal.is-immersive .modal-caption-toggle,
 .modal.is-immersive .modal-fullscreen-toggle,
@@ -1627,6 +1631,10 @@ section {
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
+    }
+
+    .modal:not(.has-caption-controls) .modal-fullscreen-toggle {
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + 56px);
     }
 }
 
