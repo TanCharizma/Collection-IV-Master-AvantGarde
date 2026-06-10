@@ -187,7 +187,7 @@
         const minTrackTime = window.innerWidth <= 768 ? 1400 : 650;
         let stableFrames = 0;
         let lastTime = startTime;
-        let hasSnappedToTarget = false;
+        let currentY = window.scrollY;
 
         const scrollLoop = (time) => {
             if (isUserScrolling || scrollRun !== activeAnchorScroll) {
@@ -198,7 +198,6 @@
             const isMobileScroll = window.innerWidth <= 768;
             const dt = Math.min(isMobileScroll ? 24 : 32, time - lastTime || 16);
             lastTime = time;
-            const currentY = window.scrollY;
             const targetY = getAnchorTargetY(target);
             const diff = targetY - currentY;
             const elapsed = time - startTime;
@@ -212,7 +211,6 @@
                 }
 
                 window.scrollTo(0, targetY);
-                hasSnappedToTarget = true;
                 stableFrames++;
                 if (elapsed >= minTrackTime && stableFrames >= 8) {
                     restoreScrollBehavior();
@@ -224,17 +222,14 @@
             }
 
             stableFrames = 0;
-            hasSnappedToTarget = false;
-            const speed = isMobileScroll
-                ? (elapsed < 260 ? 0.0072 : 0.0046) * Math.min(1, Math.max(0.7, distance / 1000))
-                : (elapsed < 220 ? 0.0058 : 0.0036) * Math.min(1, Math.max(0.62, distance / 1100));
-            const lerpFactor = 1 - Math.exp(-speed * dt);
-            window.scrollTo(0, currentY + diff * lerpFactor);
+            const lerpFactor = 1 - Math.exp(-0.002 * dt);
+            currentY += diff * lerpFactor;
+            window.scrollTo(0, currentY);
             requestAnimationFrame(scrollLoop);
         };
 
         requestAnimationFrame((time) => {
-            lastTime = time - 16;
+            lastTime = time;
             scrollLoop(time);
         });
     }

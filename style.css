@@ -856,9 +856,13 @@ body.lang-th .lang-switch .th::after {
     }
 
     .btn-bold:hover {
-        border-bottom-color: transparent;
-        transform: translateY(-2px);
-        color: var(--gold);
+        background-color: var(--gold) !important;
+        border-color: var(--text) !important;
+        color: #000000 !important;
+        box-shadow: 0 0 0 var(--text);
+        transform: translate(6px, 6px);
+        opacity: 1;
+        transition: none;
     }
 
     .scroll-hint:hover {
@@ -1339,16 +1343,22 @@ section {
 
 .btn-bold {
     font-family: var(--sans);
-    display: inline-block;
-    border-bottom: 1px solid var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--text);
     color: var(--text);
-    padding: 12px 0; /* Slightly more vertical padding */
+    background: var(--bg);
+    box-shadow: 6px 6px 0 var(--gold);
+    padding: 16px 34px;
     margin: 24px 12px;
-    font-size: 15px; /* Slightly larger font */
+    font-size: 13px;
+    font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.35em; /* More spread out */
-    min-width: 200px;
-    transition: all 0.1s ease-out;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    min-width: 220px;
+    transition: transform 0.1s ease-out, background-color 0.1s ease-out, color 0.1s ease-out, border-color 0.1s ease-out, box-shadow 0.1s ease-out;
 }
 
 .contact-list {
@@ -1706,8 +1716,8 @@ footer {
 
 .footer-column a {
     width: fit-content; 
-    padding: 8px 16px; /* Invisible padding for a larger clickable area */
-    margin-left: -16px; /* Offsets the padding so text remains flush-left */
+    padding: 3px 6px;
+    margin-left: -6px;
     transition: all 0.1s ease-out;
 }
 
@@ -1736,7 +1746,8 @@ footer {
 }
 
 .footer-bottom .designer-link {
-    display: inline;
+    display: inline-block;
+    padding: 2px 4px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.1s ease-out;
 }
@@ -2074,7 +2085,7 @@ footer {
     
     /* CTA & Footer */
     .cta-section { padding: 96px 0; }
-    .btn-bold { min-width: unset; width: 70%; margin: 16px auto; font-size: 12px; letter-spacing: 0.25em; padding: 8px 0; }
+    .btn-bold { min-width: unset; width: 70%; margin: 16px auto; font-size: 12px; letter-spacing: 0.08em; padding: 14px 18px; }
     
     footer { padding: 96px 0 calc(96px + var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom)); }
 

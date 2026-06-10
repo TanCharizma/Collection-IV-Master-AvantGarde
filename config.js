@@ -36,16 +36,16 @@ window.CLIENT_CONFIG = {
     showImageCaptions: true,
     imageCaptions: {
         // Highlights
-        "image/highlights/01.webp": { kicker: "Highlights / 01", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/02.webp": { kicker: "Highlights / 02", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/03.webp": { kicker: "Highlights / 03", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/04.webp": { kicker: "Highlights / 04", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+        "image/highlights/01.webp": { kicker: "Highlights / 01", en: "A sharp editorial opener with direct visual impact.", th: "[คำบรรยายภาษาไทย]" },
+        "image/highlights/02.webp": { kicker: "Highlights / 02", en: "Raw styling, strong gaze, and a graphic portfolio presence.", th: "[คำบรรยายภาษาไทย]" },
+        "image/highlights/03.webp": { kicker: "Highlights / 03", en: "A bold frame designed to feel immediate and memorable.", th: "[คำบรรยายภาษาไทย]" },
+        "image/highlights/04.webp": { kicker: "Highlights / 04", en: "High-contrast attitude shaped for an avant-garde impression.", th: "[คำบรรยายภาษาไทย]" },
 
         // Portfolio
-        "image/portfolio/01.webp": { kicker: "Portfolio / 01", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/02.webp": { kicker: "Portfolio / 02", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/03.webp": { kicker: "Portfolio / 03", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/04.webp": { kicker: "Portfolio / 04", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+        "image/portfolio/01.webp": { kicker: "Portfolio / 01", en: "Graphic composition with a raw editorial edge.", th: "[คำบรรยายภาษาไทย]" },
+        "image/portfolio/02.webp": { kicker: "Portfolio / 02", en: "A confrontational frame built around presence and contrast.", th: "[คำบรรยายภาษาไทย]" },
+        "image/portfolio/03.webp": { kicker: "Portfolio / 03", en: "Experimental styling gives the portrait a distinct signature.", th: "[คำบรรยายภาษาไทย]" },
+        "image/portfolio/04.webp": { kicker: "Portfolio / 04", en: "A bold portfolio study with strong visual tension.", th: "[คำบรรยายภาษาไทย]" },
         "image/portfolio/05.webp": { kicker: "Portfolio / 05", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
         "image/portfolio/06.webp": { kicker: "Portfolio / 06", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
         "image/portfolio/07.webp": { kicker: "Portfolio / 07", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
