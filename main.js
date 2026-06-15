@@ -928,7 +928,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault();
                     compCardImg.src = window.CLIENT_CONFIG.compCardUrl;
                     compCardDownload.href = window.CLIENT_CONFIG.compCardDownloadUrl || window.CLIENT_CONFIG.compCardUrl;
-                    compCardDownload.download = `${(window.CLIENT_CONFIG.name || 'client').trim().replace(/\s+/g, '-')}-comp-card.png`;
+                    const downloadUrl = compCardDownload.href || '';
+                    const extension = (downloadUrl.split('?')[0].split('.').pop() || 'png').toLowerCase();
+                    compCardDownload.download = `${(window.CLIENT_CONFIG.name || 'client').trim().replace(/\s+/g, '-')}-comp-card.${extension}`;
                     
                     // Prep image state BEFORE making modal visible
                     compCardImg.style.transition = 'none';

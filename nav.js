@@ -323,29 +323,7 @@
 
     if (isHomePage && window.location.hash) {
         window.addEventListener('load', () => {
-            const target = document.querySelector(window.location.hash);
-            if (!target) return;
-
-            let isUserScrolling = false;
-            const stopCorrection = () => { isUserScrolling = true; };
-            ['wheel', 'touchstart', 'mousedown', 'keydown'].forEach(evt => {
-                window.addEventListener(evt, stopCorrection, { once: true, passive: true });
-            });
-
-            let trackingActive = true;
-            const trackTarget = () => {
-                if (isUserScrolling || !trackingActive) return;
-
-                const targetY = getAnchorTargetY(target);
-                if (Math.abs(window.scrollY - targetY) > 2) {
-                    instantScrollTo(targetY);
-                }
-
-                requestAnimationFrame(trackTarget);
-            };
-
-            trackTarget();
-            setTimeout(() => { trackingActive = false; }, 3000);
+            glideToAnchor(window.location.hash, isInternalNav ? 420 : 160);
         }, { once: true });
     }
 
