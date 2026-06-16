@@ -609,6 +609,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return src.replace(/^\/+/, '');
             }
         };
+        const syncModalCaptionHeight = () => {
+            if (!modalCaption) return;
+            const captionHeight = modalCaption.classList.contains('visible') ? Math.ceil(modalCaption.getBoundingClientRect().height) : 0;
+            modal.style.setProperty('--modal-caption-height', `${captionHeight}px`);
+        };
 
         const updateCaption = (src) => {
             if (!modalCaption) return;
@@ -638,13 +643,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modalCaptionKicker) modalCaptionKicker.textContent = '';
                 if (modalCaptionEn) modalCaptionEn.textContent = '';
                 if (modalCaptionTh) modalCaptionTh.textContent = '';
+                syncModalCaptionHeight();
                 return;
             }
 
             if (modalCaptionKicker) modalCaptionKicker.textContent = caption.kicker || '';
             if (modalCaptionEn) modalCaptionEn.textContent = caption.en || '';
             if (modalCaptionTh) modalCaptionTh.textContent = caption.th || caption.en || '';
+            requestAnimationFrame(syncModalCaptionHeight);
         };
+
+        if (window.ResizeObserver && modalCaption) {
+            new ResizeObserver(syncModalCaptionHeight).observe(modalCaption);
+        }
 
         const syncFullscreenToggle = () => {
             modalIsImmersive = !!document.fullscreenElement || modal.classList.contains('is-immersive');

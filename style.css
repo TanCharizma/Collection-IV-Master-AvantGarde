@@ -1579,6 +1579,9 @@ section {
 @media (max-width: 768px) {
     .modal {
         --modal-mobile-toolbar-clearance: clamp(148px, 18vh, 220px);
+        --modal-caption-height: 112px;
+        --modal-control-gap: 8px;
+        --modal-control-step: 39px;
         top: calc(-1 * var(--mobile-viewport-overbleed));
         bottom: auto;
         height: calc(100vh + var(--mobile-viewport-overbleed) + var(--mobile-viewport-overbleed));
@@ -1619,7 +1622,7 @@ section {
 
     .modal-caption-toggle {
         right: 16px;
-        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + 56px);
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + var(--modal-caption-height) + var(--modal-control-gap));
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
@@ -1627,7 +1630,7 @@ section {
 
     .modal-fullscreen-toggle {
         right: 16px;
-        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + 104px);
+        bottom: calc(var(--modal-mobile-toolbar-clearance) + max(16px, env(safe-area-inset-bottom)) + var(--modal-caption-height) + var(--modal-control-gap) + var(--modal-control-step));
         font-size: 9px;
         letter-spacing: 0.2em;
         padding: 10px 12px;
