@@ -1,20 +1,93 @@
 /**
  * CLIENT CONFIGURATION
- * Update this object for each new client. Variables here automatically 
- * populate the navigation, footer, and booking page links.
+ *
+ * Fast client swap:
+ * 1. Edit the blocks marked SWAP below.
+ * 2. Replace files in /image with the same filenames when possible.
+ * 3. Leave optional links or comp-card paths blank ("") to hide unavailable UI.
+ * 4. Add image captions only for images that should show modal captions.
+ *
+ * The template reads window.CLIENT_CONFIG. Keep the exported keys at the bottom
+ * unless you are also updating main.js/nav.js/footer.js.
  */
-window.CLIENT_CONFIG = {
-    // 1. Basic Info
-    name: "CLIENT NAME",
-    email: "contact@client.com",
-    
-    // 2. Roles / Taglines
-    taglineEn: "Model · Creative Director",
-    taglineTh: "นางแบบ · ครีเอทีฟไดเรกเตอร์",
-    splashCaption: "Model / Creative Direction",
+(() => {
+    const isUrl = (value) => /^https?:\/\//i.test(String(value || "").trim());
+    const cleanHandle = (value) => String(value || "").trim().replace(/^@+/, "");
+    const digitsOnly = (value) => String(value || "").replace(/[^\d+]/g, "");
 
-    // 3. Measurements
-    measurements: {
+    const instagramLink = (value) => {
+        const handle = cleanHandle(value);
+        if (!handle) return "";
+        return isUrl(handle) ? handle : `https://instagram.com/${handle}`;
+    };
+
+    const lineLink = (value) => {
+        const input = String(value || "").trim();
+        if (!input) return "";
+        return isUrl(input) ? input : `https://line.me/ti/p/${input.replace(/^@+/, "")}`;
+    };
+
+    const whatsappLink = (value) => {
+        const input = String(value || "").trim();
+        if (!input) return "";
+        return isUrl(input) ? input : `https://wa.me/${digitsOnly(input)}`;
+    };
+
+    const path = {
+        hero: "image/hero/hero.webp",
+        about: "image/about/01.webp",
+        compCardWeb: "image/Folio-Lab-Compcard Avant Garde.webp",
+        compCardDownload: "image/Folio-Lab-Compcard Avant Garde.png",
+        highlights: [
+            "image/highlights/01.webp",
+            "image/highlights/02.webp",
+            "image/highlights/03.webp",
+            "image/highlights/04.webp"
+        ],
+        portfolio: Array.from({ length: 20 }, (_, index) => {
+            const number = String(index + 1).padStart(2, "0");
+            return `image/portfolio/${number}.webp`;
+        }),
+        digitals: [
+            "image/digitals/01.webp",
+            "image/digitals/02.webp",
+            "image/digitals/03.webp",
+            "image/digitals/04.webp"
+        ]
+    };
+
+    // SWAP: client identity, contact, and hero copy.
+    const client = {
+        name: "CLIENT NAME",
+        email: "contact@client.com",
+        instagram: "yourclient",
+        line: "",
+        whatsapp: "1234567890",
+        taglineEn: "Model · Creative Director",
+        taglineTh: "นางแบบ · ครีเอทีฟไดเรกเตอร์",
+        splashCaption: "Model / Creative Direction",
+        footerDescEn: "[Short English footer description about the client goes here.]",
+        footerDescTh: "[Short Thai footer description about the client goes here.]"
+    };
+
+    // SWAP: About page copy for future dynamic upgrades. Current AvantGarde HTML keeps this copy inline.
+    const about = {
+        bioEn: [
+            "Client bio opening. Replace this with a concise statement about presence, point of view, and creative direction.",
+            "Use this second line for selected campaigns, experience, availability, or the kind of collaborations the client is seeking.",
+            "Keep it short, specific, and editorial."
+        ],
+        bioTh: [
+            "ย่อหน้าเปิดประวัติ แทนที่ด้วยคำแนะนำตัวที่กระชับเกี่ยวกับตัวตน มุมมอง และทิศทางสร้างสรรค์",
+            "ใช้ย่อหน้าที่สองสำหรับแคมเปญ ประสบการณ์ ความพร้อมรับงาน หรือรูปแบบงานที่ต้องการร่วมงาน",
+            "เขียนให้สั้น ชัดเจน และมีโทนแบบเอดิทอเรียล"
+        ],
+        manifestoEn: "Client manifesto placeholder. Replace with one sharp line that captures their creative presence.",
+        manifestoTh: "ตัวอย่างแมนิเฟสโตของลูกค้า แทนที่ด้วยประโยคสั้นคมที่สะท้อนตัวตนและพลังสร้างสรรค์"
+    };
+
+    // SWAP: measurements shown on the homepage.
+    const measurements = {
         height: "179",
         bust: "84",
         waist: "61",
@@ -24,54 +97,75 @@ window.CLIENT_CONFIG = {
         hairTh: "บลอนด์",
         eyesEn: "Blue",
         eyesTh: "สีฟ้า"
-    },
+    };
 
-    // 4. Comp Card
-    compCardUrl: "image/Folio-Lab-Compcard Avant Garde.webp", // The image preview shown in the popup (leave blank "" to hide button)
-    compCardDownloadUrl: "image/Folio-Lab-Compcard Avant Garde.png", // High-res comp card image downloaded when they click the button
+    // SWAP: optional comp card.
+    const compCard = {
+        image: path.compCardWeb,
+        download: path.compCardDownload
+    };
 
-    // 5. Optional Image Modal Captions
-    // Set to false for a cleaner modal with no captions.
-    // Replace the placeholder text with real client captions.
-    showImageCaptions: true,
-    imageCaptions: {
-        // Highlights
-        "image/highlights/01.webp": { kicker: "Highlights / 01", en: "A sharp editorial opener with direct visual impact.", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/02.webp": { kicker: "Highlights / 02", en: "Raw styling, strong gaze, and a graphic portfolio presence.", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/03.webp": { kicker: "Highlights / 03", en: "A bold frame designed to feel immediate and memorable.", th: "[คำบรรยายภาษาไทย]" },
-        "image/highlights/04.webp": { kicker: "Highlights / 04", en: "High-contrast attitude shaped for an avant-garde impression.", th: "[คำบรรยายภาษาไทย]" },
+    // SWAP: modal captions. Remove an entry or set showImageCaptions false to hide it.
+    const captions = {
+        showImageCaptions: true,
+        items: {
+            [path.highlights[0]]: { kicker: "Highlights / 01", en: "A sharp editorial opener with direct visual impact.", th: "[คำบรรยายภาษาไทย]" },
+            [path.highlights[1]]: { kicker: "Highlights / 02", en: "Raw styling, strong gaze, and a graphic portfolio presence.", th: "[คำบรรยายภาษาไทย]" },
+            [path.highlights[2]]: { kicker: "Highlights / 03", en: "A bold frame designed to feel immediate and memorable.", th: "[คำบรรยายภาษาไทย]" },
+            [path.highlights[3]]: { kicker: "Highlights / 04", en: "High-contrast attitude shaped for an avant-garde impression.", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[0]]: { kicker: "Portfolio / 01", en: "Graphic composition with a raw editorial edge.", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[1]]: { kicker: "Portfolio / 02", en: "A confrontational frame built around presence and contrast.", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[2]]: { kicker: "Portfolio / 03", en: "Experimental styling gives the portrait a distinct signature.", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[3]]: { kicker: "Portfolio / 04", en: "A bold portfolio study with strong visual tension.", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[4]]: { kicker: "Portfolio / 05", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[5]]: { kicker: "Portfolio / 06", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[6]]: { kicker: "Portfolio / 07", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[7]]: { kicker: "Portfolio / 08", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[8]]: { kicker: "Portfolio / 09", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[9]]: { kicker: "Portfolio / 10", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[10]]: { kicker: "Portfolio / 11", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[11]]: { kicker: "Portfolio / 12", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[12]]: { kicker: "Portfolio / 13", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[13]]: { kicker: "Portfolio / 14", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[14]]: { kicker: "Portfolio / 15", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[15]]: { kicker: "Portfolio / 16", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[16]]: { kicker: "Portfolio / 17", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[17]]: { kicker: "Portfolio / 18", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[18]]: { kicker: "Portfolio / 19", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.portfolio[19]]: { kicker: "Portfolio / 20", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.digitals[0]]: { kicker: "Digitals / 01", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.digitals[1]]: { kicker: "Digitals / 02", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.digitals[2]]: { kicker: "Digitals / 03", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
+            [path.digitals[3]]: { kicker: "Digitals / 04", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" }
+        }
+    };
 
-        // Portfolio
-        "image/portfolio/01.webp": { kicker: "Portfolio / 01", en: "Graphic composition with a raw editorial edge.", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/02.webp": { kicker: "Portfolio / 02", en: "A confrontational frame built around presence and contrast.", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/03.webp": { kicker: "Portfolio / 03", en: "Experimental styling gives the portrait a distinct signature.", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/04.webp": { kicker: "Portfolio / 04", en: "A bold portfolio study with strong visual tension.", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/05.webp": { kicker: "Portfolio / 05", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/06.webp": { kicker: "Portfolio / 06", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/07.webp": { kicker: "Portfolio / 07", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/08.webp": { kicker: "Portfolio / 08", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/09.webp": { kicker: "Portfolio / 09", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/10.webp": { kicker: "Portfolio / 10", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/11.webp": { kicker: "Portfolio / 11", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/12.webp": { kicker: "Portfolio / 12", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/13.webp": { kicker: "Portfolio / 13", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/14.webp": { kicker: "Portfolio / 14", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/15.webp": { kicker: "Portfolio / 15", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/16.webp": { kicker: "Portfolio / 16", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/17.webp": { kicker: "Portfolio / 17", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/18.webp": { kicker: "Portfolio / 18", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/19.webp": { kicker: "Portfolio / 19", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/portfolio/20.webp": { kicker: "Portfolio / 20", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-
-        // Digitals
-        "image/digitals/01.webp": { kicker: "Digitals / 01", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/digitals/02.webp": { kicker: "Digitals / 02", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/digitals/03.webp": { kicker: "Digitals / 03", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-        "image/digitals/04.webp": { kicker: "Digitals / 04", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" }
-    },
-
-    // 6. Links
-    instagram: "https://instagram.com/yourclient",
-    line: "https://line.me/",
-    whatsapp: "https://wa.me/1234567890"
-};
+    window.CLIENT_CONFIG = {
+        name: client.name,
+        email: client.email,
+        taglineEn: client.taglineEn,
+        taglineTh: client.taglineTh,
+        splashCaption: client.splashCaption,
+        footerBioEn: client.footerDescEn,
+        footerBioTh: client.footerDescTh,
+        footerDescEn: client.footerDescEn,
+        footerDescTh: client.footerDescTh,
+        aboutBioEn: about.bioEn,
+        aboutBioTh: about.bioTh,
+        manifestoEn: about.manifestoEn,
+        manifestoTh: about.manifestoTh,
+        measurements,
+        compCardUrl: compCard.image,
+        compCardDownloadUrl: compCard.download,
+        showImageCaptions: captions.showImageCaptions,
+        imageCaptions: captions.items,
+        instagram: instagramLink(client.instagram),
+        line: lineLink(client.line),
+        whatsapp: whatsappLink(client.whatsapp),
+        client,
+        about,
+        assets: path,
+        compCard,
+        captions
+    };
+})();
