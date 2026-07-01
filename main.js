@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const heroContent = document.querySelector('.hero-content');
         
         // Automatically extract the image URL defined in the HTML inline style
-        let heroImgUrl = 'image/placeholder-hero.webp';
+        let heroImgUrl = window.CLIENT_CONFIG?.assets?.hero || 'image/hero/hero.webp';
         if (heroBg && heroBg.style) {
             const bgUrlMatch = heroBg.style.backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
             if (bgUrlMatch) heroImgUrl = bgUrlMatch[1];

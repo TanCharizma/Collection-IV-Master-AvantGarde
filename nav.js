@@ -501,7 +501,6 @@
             if (el) el.textContent = value;
         };
 
-        inject('clientNameHero', window.CLIENT_CONFIG.name);
         inject('taglineEn', window.CLIENT_CONFIG.taglineEn);
         inject('taglineTh', window.CLIENT_CONFIG.taglineTh);
 
