@@ -245,10 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 heroImageLoad.then(triggerHeroEntrance);
             } else {
                 sessionStorage.setItem('hasSeenSplash', 'true');
+                document.documentElement.style.overflow = 'hidden';
                 document.body.style.overflow = 'hidden'; // Lock screen during splash
                 Promise.all([minSplashTime, heroImageLoad]).then(() => {
                     splashScreen.classList.add('hidden');
                     setTimeout(() => {
+                        document.documentElement.style.overflow = '';
                         document.body.style.overflow = ''; // Unlock scrolling
                         document.body.classList.remove('splash-active');
                         triggerHeroEntrance();
@@ -497,7 +499,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ignoreElement,
         allowHorizontalSwipe = false,
         onHorizontalSwipe,
-        getDragCenterY = () => '-50%'
+        getDragCenterY = () => '-50%',
+        getRestTransform = () => `translate(-50%, ${getDragCenterY()})`,
+        getVerticalDragTransform = (dragY, scale) => `translate(-50%, calc(${getDragCenterY()} + ${dragY * 0.72}px)) scale(${scale})`,
+        getDismissTransform = () => 'translate(-50%, 35%) scale(0.96)',
+        getHorizontalDragTransform = (deltaX) => `translate(calc(-50% + ${deltaX * 0.6}px), ${getDragCenterY()})`
     }) => {
         if (!modalElement || !dragElement) return;
 
@@ -540,13 +546,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (activeGesture === 'vertical') {
                 const dragY = Math.max(0, deltaY);
                 const scale = Math.max(0.94, 1 - dragY / 1800);
-                dragElement.style.transform = `translate(-50%, calc(${getDragCenterY()} + ${dragY * 0.72}px)) scale(${scale})`;
+                dragElement.style.transform = getVerticalDragTransform(dragY, scale);
                 dragElement.style.opacity = `${Math.max(0.35, 1 - dragY / 260)}`;
                 return;
             }
 
             if (allowHorizontalSwipe) {
-                dragElement.style.transform = `translate(calc(-50% + ${deltaX * 0.6}px), ${getDragCenterY()})`;
+                dragElement.style.transform = getHorizontalDragTransform(deltaX);
                 dragElement.style.opacity = `${Math.max(0.3, 1 - Math.abs(deltaX) / window.innerWidth)}`;
             }
         }, { passive: false });
@@ -563,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (wasVertical && deltaY > closeThreshold && Math.abs(deltaY) > Math.abs(deltaX)) {
                 dragElement.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-                dragElement.style.transform = 'translate(-50%, 35%) scale(0.96)';
+                dragElement.style.transform = getDismissTransform();
                 dragElement.style.opacity = '0';
                 setTimeout(closeModal, 160);
                 return;
@@ -576,8 +582,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            dragElement.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
-            dragElement.style.transform = `translate(-50%, ${getDragCenterY()})`;
+            dragElement.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease';
+            dragElement.style.transform = getRestTransform();
             dragElement.style.opacity = '1';
         }, { passive: true });
     };
@@ -873,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const compImg = document.getElementById('compCardImg');
                 if (compImg) {
                     compImg.style.transition = 'none';
-                    compImg.style.transform = 'translate(-50%, -50%)';
+                    compImg.style.transform = window.innerWidth <= 768 ? 'scale(1)' : 'translate(-50%, -50%) scale(1)';
                     compImg.style.opacity = '1';
                 }
             }
@@ -914,14 +920,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const compCardImg = document.getElementById('compCardImg');
         const compCardDownload = document.getElementById('compCardDownload');
 
-        if (compCardContainer && compCardBtn && compCardModal && compCardImg) {
+        if (compCardContainer && compCardBtn && compCardModal && compCardImg && compCardDownload) {
+            const getCompCardTransform = (scale = 1) => {
+                return window.innerWidth <= 768 ? `scale(${scale})` : `translate(-50%, -50%) scale(${scale})`;
+            };
             const closeCompCardModal = () => {
                 compCardModal.classList.remove('show-modal');
                 unlockScroll();
                 setTimeout(() => {
                     if (!compCardModal.classList.contains('show-modal')) {
                         compCardImg.style.transition = 'none';
-                        compCardImg.style.transform = 'translate(-50%, -50%)';
+                        compCardImg.style.transform = getCompCardTransform(1);
                         compCardImg.style.opacity = '1';
                     }
                 }, 250);
@@ -931,7 +940,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalElement: compCardModal,
                 dragElement: compCardImg,
                 closeModal: closeCompCardModal,
-                ignoreElement: '#compCardDownload'
+                ignoreElement: '#compCardDownload',
+                getRestTransform: () => getCompCardTransform(1),
+                getVerticalDragTransform: (dragY, scale) => window.innerWidth <= 768
+                    ? `translateY(${dragY * 0.72}px) scale(${scale})`
+                    : `translate(-50%, calc(-50% + ${dragY * 0.72}px)) scale(${scale})`,
+                getDismissTransform: () => window.innerWidth <= 768
+                    ? 'translateY(35%) scale(0.96)'
+                    : 'translate(-50%, 35%) scale(0.96)'
             });
 
             if (window.CLIENT_CONFIG.compCardUrl && window.CLIENT_CONFIG.compCardUrl.trim() !== "") {
@@ -940,12 +956,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     compCardImg.src = window.CLIENT_CONFIG.compCardUrl;
                     compCardDownload.href = window.CLIENT_CONFIG.compCardDownloadUrl || window.CLIENT_CONFIG.compCardUrl;
                     const downloadUrl = compCardDownload.href || '';
-                    const extension = (downloadUrl.split('?')[0].split('.').pop() || 'png').toLowerCase();
+                    const extension = (downloadUrl.split('?')[0].match(/\.([a-z0-9]+)$/i) || [])[1] || 'png';
                     compCardDownload.download = `${(window.CLIENT_CONFIG.name || 'client').trim().replace(/\s+/g, '-')}-comp-card.${extension}`;
                     
-                    // Prep image state BEFORE making modal visible
                     compCardImg.style.transition = 'none';
-                    compCardImg.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                    compCardImg.style.transform = getCompCardTransform(0.95);
                     compCardImg.style.opacity = '0';
                     
                     compCardModal.classList.add('show-modal');
@@ -954,8 +969,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const playCompCardAnimation = () => {
                         requestAnimationFrame(() => {
                             requestAnimationFrame(() => {
-                                compCardImg.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease';
-                                compCardImg.style.transform = 'translate(-50%, -50%) scale(1)';
+                                compCardImg.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease';
+                                compCardImg.style.transform = getCompCardTransform(1);
                                 compCardImg.style.opacity = '1';
                             });
                         });

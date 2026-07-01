@@ -84,6 +84,18 @@ body.splash-active {
     background-color: var(--bg);
 }
 
+html:has(body.splash-active),
+body.splash-active {
+    overflow: hidden;
+    scrollbar-width: none;
+}
+
+html:has(body.splash-active)::-webkit-scrollbar,
+body.splash-active::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
 body.splash-active nav,
 body.splash-active .hero,
 body.splash-active section,
@@ -1744,7 +1756,10 @@ section {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 220px;
+    min-width: 178px;
+    padding: 12px 24px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-align: center;
     white-space: normal;
 }
@@ -1936,10 +1951,10 @@ section {
 
     .comp-card-download {
         width: auto;
-        min-width: min(260px, calc(100vw - 72px));
-        padding: 13px 22px;
-        font-size: 10px;
-        letter-spacing: 0.16em;
+        min-width: min(210px, calc(100vw - 96px));
+        padding: 11px 18px;
+        font-size: 9px;
+        letter-spacing: 0.14em;
         margin: 0;
     }
 
