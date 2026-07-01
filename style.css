@@ -336,9 +336,18 @@ a:hover { opacity: 0.7; }
 .container > *,
 .hero-content,
 .hero-text-block,
+.hero-btns,
+.page-header,
+.page-description,
+.section-label,
 .portfolio-column,
 .masonry-col,
-.nav-links {
+.nav-links,
+.btn-primary,
+.btn-secondary,
+.btn-bold,
+.booking-placeholder,
+.avant-video-placeholder {
     min-width: 0;
 }
 
@@ -889,6 +898,15 @@ body.lang-th .lang-switch .th::after {
 .btn-primary { font-family: var(--sans); background: var(--text); color: var(--bg); padding: 16px 48px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--text); box-shadow: 4px 4px 0px var(--gold); }
 .btn-secondary { font-family: var(--sans); background: transparent; border: 1px solid var(--white); color: var(--white); padding: 16px 48px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: none; }
 
+.btn-primary,
+.btn-secondary,
+.btn-bold {
+    max-width: 100%;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 @media (hover: hover) {
     .back-to-top:hover { 
         color: var(--gold); 
@@ -1190,11 +1208,13 @@ section {
     line-height: 0.9;
     letter-spacing: -0.055em;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 .avant-video-placeholder__note {
     max-width: 420px;
     opacity: 0.52;
+    overflow-wrap: anywhere;
 }
 
 .avant-video-placeholder__play {
@@ -1221,6 +1241,7 @@ section {
 
 .booking-placeholder {
     width: 100%;
+    max-width: 100%;
     min-height: 520px;
     display: flex;
     flex-direction: column;
@@ -1244,6 +1265,7 @@ section {
     letter-spacing: -0.05em;
     text-align: center;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 .booking-placeholder__eyebrow {
@@ -1254,6 +1276,7 @@ section {
     line-height: 1.4;
     letter-spacing: 0.32em;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 [data-theme="dark"] .avant-video-placeholder,
@@ -1490,6 +1513,7 @@ section {
     position: relative;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border-subtle);
+    overflow-wrap: anywhere;
 }
 
 .page-description {
@@ -1501,6 +1525,8 @@ section {
     opacity: 1;
     color: var(--text);
     text-align: left;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .editorial-quote {
@@ -1601,6 +1627,10 @@ section {
 .contact-list .btn-bold {
     margin: 12px 0; /* Horizontal spacing is now handled by gap */
     min-width: 160px; /* More compact for a single-row feel */
+}
+
+.inquiry-section {
+    max-width: 100%;
 }
 
 /* --- 5. PAGE SPECIFIC LAYOUTS (About & Booking) --- */
@@ -2191,7 +2221,10 @@ footer {
 
     /* Cal.com Widget & Booking Layout Adjustments for Tablets and below */
     [id="my-cal-inline-booking-request"] { min-height: 600px !important; margin-top: 48px !important; }
-    .inquiry-section { margin-top: 64px !important; }
+    .inquiry-section {
+        margin-top: 64px !important;
+        box-sizing: border-box;
+    }
 }
 
 /* Small Tablets & Large Mobiles (768px and below) */
@@ -2306,7 +2339,13 @@ footer {
     /* Grids */
     .featured-grid { grid-template-columns: repeat(2, 1fr); }
     .digitals-grid { grid-template-columns: repeat(2, 1fr); }
-    .full-grid { grid-template-columns: repeat(3, 1fr); }
+    .full-grid {
+        gap: 24px;
+    }
+
+    .portfolio-column {
+        flex-direction: column;
+    }
     
     .video-grid { gap: 32px; }
     .video-item:nth-child(odd), .video-item:nth-child(even) {
@@ -2334,13 +2373,24 @@ footer {
         padding: 48px 24px;
         font-size: clamp(28px, 9vw, 44px);
     }
+
+    .page-description {
+        width: 100% !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .inquiry-section {
+        padding: 40px 32px !important;
+    }
     
     /* About Page Bio */
     .split-layout { flex-direction: column; gap: 48px; }
-    .split-layout img { width: 100%; transform: none; box-shadow: 8px 8px 0px var(--text); }
-    .split-layout .bio { width: 100%; margin-left: 0; margin-top: 0; padding: 24px; transform: rotate(1deg); box-shadow: 8px 8px 0px var(--gold); }
+    .split-layout img { width: calc(100% - 8px); transform: none; box-shadow: 8px 8px 0px var(--text); }
+    .split-layout .bio { width: calc(100% - 8px); margin-left: 0; margin-top: 0; padding: 24px; transform: rotate(1deg); box-shadow: 8px 8px 0px var(--gold); }
     .selected-clients-panel,
     .about-clients__inner {
+        width: calc(100% - 8px);
         padding: 36px 24px;
     }
 
@@ -2406,7 +2456,7 @@ footer {
     .hero-btns .btn-secondary {
         width: min(220px, calc(100vw - 48px));
     }
-    .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.2em; }
+    .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 12px; letter-spacing: 0.16em; }
     .hero-scroll-hint, .about-scroll-hint { right: 24px; bottom: calc(24px + env(safe-area-inset-bottom)); }
     .scroll-hint { gap: 10px; font-size: 9px; letter-spacing: 0.26em; }
     .scroll-hint__line { height: 38px; }
@@ -2422,11 +2472,11 @@ footer {
     } /* Ensures the 1px wireframe remains on mobile */
     
     /* CCTV Archive Grid Mobile */
-    .full-grid { 
+    .full-grid {
         display: flex;
         flex-direction: row;
         gap: 0;
-    } 
+    }
     .portfolio-column { display: flex; flex-direction: column; gap: 0; margin-top: 0 !important; }
     .masonry-col { display: flex; flex-direction: column; gap: 0; }
     .full-grid img { margin-bottom: 0; display: block; width: 100%; height: auto; }
@@ -2437,6 +2487,30 @@ footer {
     /* CTA & Footer */
     .cta-section { padding: 96px 0; }
     .btn-bold { min-width: unset; width: 70%; margin: 16px auto; font-size: 12px; letter-spacing: 0.08em; padding: 14px 18px; }
+    .inquiry-section {
+        padding: 32px 20px !important;
+    }
+
+    .booking-placeholder {
+        min-height: 360px;
+        padding: 40px 18px;
+        font-size: clamp(26px, 8.4vw, 36px);
+        box-shadow: 6px 6px 0 var(--text);
+    }
+
+    .avant-video-placeholder {
+        min-height: 240px;
+    }
+
+    .avant-video-placeholder__inner {
+        padding: 32px 18px;
+    }
+
+    .avant-video-placeholder__frame,
+    .avant-video-placeholder__note,
+    .booking-placeholder__eyebrow {
+        letter-spacing: 0.2em;
+    }
     
     footer { padding: 96px 0 calc(96px + var(--mobile-viewport-overbleed) + env(safe-area-inset-bottom)); }
 
