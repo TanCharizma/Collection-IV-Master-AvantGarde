@@ -30,6 +30,7 @@
     
     <meta name="theme-color" content="#EAEAEA" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="manifest.json">
     <title>Portfolio | Client Name</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,19 +136,19 @@
     </section>
 
     <!-- SECTION 2.5: Selected Clients -->
-    <section id="selected-clients" style="padding: 0 0 96px 0;">
+    <section id="selected-clients" class="selected-clients-section">
         <div class="container">
-            <div style="grid-column: span 12; text-align: center;">
-                <h3 class="reveal" style="font-size: 12px; letter-spacing: 0.3em; margin-bottom: 48px; font-weight: 400; color: var(--gold);">
+            <div class="selected-clients-panel">
+                <h3 class="client-strip-title reveal">
                     <span lang="en">Selected Clients</span>
                     <span lang="th">ลูกค้าที่ร่วมงาน</span>
                 </h3>
-                <div class="reveal delay-1" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: clamp(32px, 6vw, 64px);">
-                    <img src="image/brand_icons/vogue.webp" alt="VOGUE" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
-                    <img src="image/brand_icons/elle.webp" alt="ELLE" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
-                    <img src="image/brand_icons/cartier.webp" alt="CARTIER" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
-                    <img src="image/brand_icons/armani.webp" alt="ARMANI" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
-                    <img src="image/brand_icons/levi.webp" alt="LEVI'S" class="brand-logo" style="height: clamp(16px, 3vw, 20px); width: auto; object-fit: contain;" loading="lazy" decoding="async">
+                <div class="brand-strip brand-strip--home reveal delay-1">
+                    <img src="image/brand_icons/vogue.webp" alt="VOGUE" class="brand-logo" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/elle.webp" alt="ELLE" class="brand-logo" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/cartier.webp" alt="CARTIER" class="brand-logo" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/armani.webp" alt="ARMANI" class="brand-logo" loading="lazy" decoding="async">
+                    <img src="image/brand_icons/levi.webp" alt="LEVI'S" class="brand-logo" loading="lazy" decoding="async">
                 </div>
             </div>
         </div>
@@ -209,16 +210,26 @@
             <div style="grid-column: span 12;">
                 <div class="video-grid">
                     <div class="video-item reveal">
-                        <div style="position: relative; padding-bottom: 56.25%; height: 0;">
-                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--surface); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--text);">
-                                <span style="font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;">[ Video Embed Placeholder 1 ]</span>
+                        <div class="avant-video-placeholder">
+                            <div class="avant-video-placeholder__inner">
+                                <span class="avant-video-placeholder__frame">Film Slot / 01</span>
+                                <span class="avant-video-placeholder__play" aria-hidden="true"></span>
+                                <span class="avant-video-placeholder__title" lang="en">Campaign Film</span>
+                                <span class="avant-video-placeholder__title" lang="th">วิดีโอแคมเปญ</span>
+                                <span class="avant-video-placeholder__note" lang="en">Replace with Vimeo, YouTube, or uploaded video embed.</span>
+                                <span class="avant-video-placeholder__note" lang="th">แทนที่ด้วยวิดีโอจาก Vimeo, YouTube หรือไฟล์วิดีโอ</span>
                             </div>
                         </div>
                     </div>
                     <div class="video-item reveal">
-                        <div style="position: relative; padding-bottom: 56.25%; height: 0;">
-                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--surface); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--text);">
-                                <span style="font-family: var(--sans); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;">[ Video Embed Placeholder 2 ]</span>
+                        <div class="avant-video-placeholder">
+                            <div class="avant-video-placeholder__inner">
+                                <span class="avant-video-placeholder__frame">Film Slot / 02</span>
+                                <span class="avant-video-placeholder__play" aria-hidden="true"></span>
+                                <span class="avant-video-placeholder__title" lang="en">Runway Clip</span>
+                                <span class="avant-video-placeholder__title" lang="th">วิดีโอรันเวย์</span>
+                                <span class="avant-video-placeholder__note" lang="en">Use this frame for movement, runway, or behind-the-scenes footage.</span>
+                                <span class="avant-video-placeholder__note" lang="th">ใช้พื้นที่นี้สำหรับวิดีโอเคลื่อนไหว รันเวย์ หรือเบื้องหลังการทำงาน</span>
                             </div>
                         </div>
                     </div>
@@ -245,11 +256,11 @@
                     <div><span lang="en">Eyes</span><span lang="th">นัยน์ตา</span> / <span lang="en" id="val-eyesEn"></span><span lang="th" id="val-eyesTh"></span></div>   
                 </div>
                 <!-- Brutalist Comp Card Button -->
-                <div class="reveal delay-1" id="compCardContainer" style="text-align: center; margin-top: 48px;">
-                    <a href="#" id="compCardBtn" class="btn-bold">
+                <div class="comp-card-container reveal delay-1" id="compCardContainer">
+                    <button type="button" id="compCardBtn" class="btn-bold">
                         <span lang="en">View Comp Card</span>
                         <span lang="th">ดูคอมพ์การ์ด</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -312,9 +323,9 @@
 
     <!-- Dedicated Comp Card Modal -->
     <div id="compCardModal" class="modal" role="dialog" aria-modal="true" aria-label="Comp Card">
-        <img class="modal-content" id="compCardImg" alt="Client Comp Card" style="max-height: 80vh; border: 1px solid var(--text); box-shadow: 8px 8px 0px var(--gold);">
-        <div class="comp-card-modal-note" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2001; text-align: center; width: 100%;">
-            <a href="#" id="compCardDownload" download="Comp_Card.png" class="btn-primary">
+        <img class="modal-content" id="compCardImg" alt="Client Comp Card">
+        <div class="comp-card-modal-note">
+            <a href="#" id="compCardDownload" download="Comp_Card.png" class="btn-primary comp-card-download">
                 <span lang="en">Download Comp Card</span>
                 <span lang="th">ดาวน์โหลดคอมพ์การ์ด</span>
             </a>

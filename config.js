@@ -106,37 +106,18 @@
     };
 
     // SWAP: modal captions. Remove an entry or set showImageCaptions false to hide it.
+    // Digitals intentionally ship without captions; they keep fullscreen controls only.
     const captions = {
         showImageCaptions: true,
         items: {
-            [path.highlights[0]]: { kicker: "Highlights / 01", en: "A sharp editorial opener with direct visual impact.", th: "[คำบรรยายภาษาไทย]" },
-            [path.highlights[1]]: { kicker: "Highlights / 02", en: "Raw styling, strong gaze, and a graphic portfolio presence.", th: "[คำบรรยายภาษาไทย]" },
-            [path.highlights[2]]: { kicker: "Highlights / 03", en: "A bold frame designed to feel immediate and memorable.", th: "[คำบรรยายภาษาไทย]" },
-            [path.highlights[3]]: { kicker: "Highlights / 04", en: "High-contrast attitude shaped for an avant-garde impression.", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[0]]: { kicker: "Portfolio / 01", en: "Graphic composition with a raw editorial edge.", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[1]]: { kicker: "Portfolio / 02", en: "A confrontational frame built around presence and contrast.", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[2]]: { kicker: "Portfolio / 03", en: "Experimental styling gives the portrait a distinct signature.", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[3]]: { kicker: "Portfolio / 04", en: "A bold portfolio study with strong visual tension.", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[4]]: { kicker: "Portfolio / 05", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[5]]: { kicker: "Portfolio / 06", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[6]]: { kicker: "Portfolio / 07", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[7]]: { kicker: "Portfolio / 08", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[8]]: { kicker: "Portfolio / 09", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[9]]: { kicker: "Portfolio / 10", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[10]]: { kicker: "Portfolio / 11", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[11]]: { kicker: "Portfolio / 12", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[12]]: { kicker: "Portfolio / 13", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[13]]: { kicker: "Portfolio / 14", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[14]]: { kicker: "Portfolio / 15", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[15]]: { kicker: "Portfolio / 16", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[16]]: { kicker: "Portfolio / 17", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[17]]: { kicker: "Portfolio / 18", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[18]]: { kicker: "Portfolio / 19", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.portfolio[19]]: { kicker: "Portfolio / 20", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.digitals[0]]: { kicker: "Digitals / 01", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.digitals[1]]: { kicker: "Digitals / 02", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.digitals[2]]: { kicker: "Digitals / 03", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" },
-            [path.digitals[3]]: { kicker: "Digitals / 04", en: "[English caption here]", th: "[คำบรรยายภาษาไทย]" }
+            [path.highlights[0]]: { kicker: "Highlights / 01", en: "A sharp editorial opener with direct visual impact.", th: "ภาพเปิดแบบเอดิทอเรียลที่คมชัดและมีแรงปะทะทางสายตา" },
+            [path.highlights[1]]: { kicker: "Highlights / 02", en: "Raw styling, strong gaze, and a graphic portfolio presence.", th: "สไตลิ่งดิบ สายตาชัด และตัวตนในพอร์ตที่มีกราฟิกจัดจ้าน" },
+            [path.highlights[2]]: { kicker: "Highlights / 03", en: "A bold frame designed to feel immediate and memorable.", th: "เฟรมที่เด่นชัด ออกแบบให้รู้สึกทันทีและจดจำได้" },
+            [path.highlights[3]]: { kicker: "Highlights / 04", en: "High-contrast attitude shaped for an avant-garde impression.", th: "ท่าทีคอนทราสต์สูงที่สร้างความรู้สึกแบบอาวองการ์ด" },
+            [path.portfolio[0]]: { kicker: "Portfolio / 01", en: "Graphic composition with a raw editorial edge.", th: "องค์ประกอบกราฟิกพร้อมความดิบแบบเอดิทอเรียล" },
+            [path.portfolio[1]]: { kicker: "Portfolio / 02", en: "A confrontational frame built around presence and contrast.", th: "เฟรมที่เผชิญหน้า สร้างจากตัวตนและคอนทราสต์" },
+            [path.portfolio[2]]: { kicker: "Portfolio / 03", en: "Experimental styling gives the portrait a distinct signature.", th: "สไตลิ่งเชิงทดลองที่ทำให้พอร์ตเทรตมีลายเซ็นชัดเจน" },
+            [path.portfolio[3]]: { kicker: "Portfolio / 04", en: "A bold portfolio study with strong visual tension.", th: "ภาพศึกษาในพอร์ตที่หนักแน่นและมีแรงตึงทางภาพ" }
         }
     };
 

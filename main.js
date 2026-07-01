@@ -887,17 +887,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const lnkWa = document.getElementById('link-wa');
         const lnkIg = document.getElementById('link-ig');
         
-        const setupLink = (el, url, prefix = "") => {
+        const setupLink = (el, url, prefix = "", hideWhenBlank = true) => {
             if (el) {
                 if (url && url.trim() !== "") {
                     el.href = prefix + url;
-                } else {
+                } else if (hideWhenBlank) {
                     el.style.display = "none"; // Automatically hide if client leaves it blank
                 }
             }
         };
 
-        setupLink(lnkLine, window.CLIENT_CONFIG.line);
+        setupLink(lnkLine, window.CLIENT_CONFIG.line, "", false);
         setupLink(lnkEmail, window.CLIENT_CONFIG.email, "mailto:");
         setupLink(lnkWa, window.CLIENT_CONFIG.whatsapp);
         setupLink(lnkIg, window.CLIENT_CONFIG.instagram);

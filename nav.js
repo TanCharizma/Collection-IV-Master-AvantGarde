@@ -6,6 +6,8 @@
     // --- NATIVE APP TRANSITIONS (CURTAIN SETUP) ---
     // Pre-inject the curtain so it's ready before the DOM fully parses
     const isFirstLoad = !sessionStorage.getItem('appCurtainLoaded');
+    const isInternalNav = sessionStorage.getItem('internalNav_AvantGarde') === 'true';
+    sessionStorage.removeItem('internalNav_AvantGarde');
     document.write(`<div class="app-transition-curtain ${!isFirstLoad ? 'start-covered' : ''}" id="appCurtain"></div>`);
     sessionStorage.setItem('appCurtainLoaded', 'true');
 
@@ -484,6 +486,7 @@
             
             anchor.addEventListener('click', (e) => {
                 e.preventDefault();
+                sessionStorage.setItem('internalNav_AvantGarde', 'true');
                 if (curtain) curtain.classList.add('curtain-cover');
                 
                 setTimeout(() => window.location.href = href, 200); // Faster cross-page transition
