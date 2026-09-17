@@ -83,3 +83,7 @@
 /* Cal.com-style brand accent, inherited from the template palette. */
 .cal-preview { --cal-accent-text: #fff; }
 [data-theme="dark"] .cal-preview { --cal-accent-text: #171717; }
+
+.cal-preview .cal-disclaimer { display:grid; grid-template-columns:auto 1fr; gap:8px 14px; align-items:start; margin:0 0 18px; padding:14px 16px; border:1px solid var(--cal-line); border-left:4px solid var(--gold); border-radius:6px; background:color-mix(in srgb,var(--gold) 8%,var(--surface)); font-size:12px; line-height:1.55; text-align:left; }
+.cal-preview .cal-disclaimer strong { white-space:nowrap; font-weight:700; }
+@media(max-width:700px){.cal-preview .cal-disclaimer{grid-template-columns:1fr;gap:5px;padding:13px 14px;}}
